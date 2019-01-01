@@ -83,6 +83,10 @@ function httpResHandler(req, res) {
 	}
 }
 
+var names = require('names')
+// names.gen_name()
+// names.gen_color()
+
 // Start the server after building client_build.js
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
