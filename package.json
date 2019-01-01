@@ -1,0 +1,36 @@
+{
+  "name": "chatroom",
+  "version": "1.0.0",
+  "description": "A chatroom where you can see what others type.",
+  "main": "server.js",
+  "dependencies": {
+    "koa": "^2.6.2",
+    "koa-router": "^7.4.0",
+    "module-concat": "^2.3.0",
+    "ws": "^6.1.2",
+    "ws-server-wrapper": "^1.4.1",
+    "ws-wrapper": "^1.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sentient-ai/voyochat.git"
+  },
+  "keywords": [
+    "chatroom",
+    "chat",
+    "instant",
+    "messaging",
+    "communication"
+  ],
+  "author": "Derek",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sentient-ai/voyochat/issues"
+  },
+  "homepage": "https://github.com/sentient-ai/voyochat#readme"
+}
