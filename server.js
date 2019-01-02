@@ -48,9 +48,9 @@ while(username === "system" || (users[username] && users[username] !== this)){
 	username = names.gen_name();
 }
 
-for(var i in users) {
+/*for(var i in users) {
 	users[i].emit("message", "system", username + " has connected.");
-}
+}*/
 
 // Save the username
 this.set("username", username);
@@ -73,7 +73,6 @@ users[username] = this;
 		newmsg = "Type: " + p_msg[0] + " | " + p_msg[1];
 		if (p_msg[0] === "math")
 			newmsg = p_msg[1];
-
 		const sender = this.get("username");
 		for(var i in users) {
 			users[i].emit("update line", newmsg, sender);

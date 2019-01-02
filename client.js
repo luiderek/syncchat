@@ -18,7 +18,7 @@ socket.on("error", () => {
 	socket.disconnect();
 });
 
-//socket.of("chat").on("message", addMessage);
+socket.of("chat").on("message", addMessage);
 
 socket.of("chat").on('open line', function(name, color) {
 	if (document.getElementById("id:"+name) === null){
@@ -67,6 +67,7 @@ socket.of("chat").on('close line', function(name) {
 	closedMess.classList.add("blipout");
 
 	function delaykill(){
+		closedMess = document.getElementById('id:'+name)
 		if (closedMess !== null){
 			closedMess.remove();
 			closedMess.id = ".";
@@ -76,7 +77,7 @@ socket.of("chat").on('close line', function(name) {
 	closetimeout = setTimeout(delaykill, 305);
 });
 
-/*
+
 function addMessage(fromStr, msg) {
 	// Add a message to the DOM
 	let p = $('<p class="message">');
@@ -93,7 +94,7 @@ function addMessage(fromStr, msg) {
 	if(list.scrollHeight - list.scrollTop - list.clientHeight <= 30)
 		list.scrollTop = list.scrollHeight;
 }
-*/
+
 
 function login() {
 	$("#loginButton").hide();
@@ -119,6 +120,7 @@ function logout() {
 	// Send request to logout
 	socket.of("chat").request("logout")
 		.then(() => {
+			socket.of("chat").emit("close line");
 		})
 		.catch((err) => {
 			console.error(err);
@@ -138,7 +140,7 @@ function changeTitle(){
 	update_count++;
 	var newTitle = '(' + update_count +') ' + title;
 	document.title = newTitle;
-	// Maybe get it to flash the favicon as well? 
+	// Maybe get it to flash the favicon as well? 1
 }
 
 $(() => {
