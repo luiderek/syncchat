@@ -60,10 +60,10 @@ socketServer.of("chat").on("login", function() {
 
 	// Note that the "chat" channel is actually stored in `users[username]`
 	users[username] = this;
-}
+})
 
-).on("message", function(msg) {
-	// short for processed message. 
+.on("message", function(msg) {
+	// short for processed message.
 	let p_msg = msgeval.process(msg);
  	// here is a function that takes in a message and spits back
 	// a cleaned up message or a "hmm. its math / dice / a name change"
