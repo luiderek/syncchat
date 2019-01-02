@@ -10,7 +10,6 @@
     "ws": "^6.1.2",
     "ws-server-wrapper": "^1.4.1",
     "ws-wrapper": "^1.7.0",
-    "dicecup": "^1.1.0",
     "seedrandom": "^2.4.4",
     "math-expression-evaluator": "^1.2.17"
   },
