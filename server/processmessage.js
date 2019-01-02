@@ -43,6 +43,7 @@ function evaluatorModule(msg) {
 
       case "=":
         type = "math";
+        msg = msg.substring(1,msg.length);
         break;
 
       default:
