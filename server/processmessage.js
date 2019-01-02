@@ -30,8 +30,9 @@ function evaluatorModule(msg) {
           case msg.substring(1,2) === "?":
             msg = msg.substring(2,msg.length).trim();
             type = "help";
-            if (msg = "")
-              msg = "h";
+            if (msg = ""){
+              msg = "placeholdertext";
+            }
             break;
 
           default:

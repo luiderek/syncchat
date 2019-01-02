@@ -39,8 +39,7 @@ socketServer.on("disconnect", (socket) => {
 
 // Setup event handlers on the WebSocketServerWrapper for the "chat" channel
 // Soon I'll have to replace "chat" with rooms themselves.
-socketServer.of("chat")
-.on("login", function() {
+socketServer.of("chat").on("login", function() {
 /* `this` refers to the WebSocketWrapper "chat" channel, which is unique
 	for a given WebSocket */
 username = names.gen_name();
@@ -55,13 +54,27 @@ for(var i in users) {
 
 // Save the username
 this.set("username", username);
-
 // Note that the "chat" channel is actually stored in `users[username]`
 users[username] = this;
 })
 
 .on("message", function(msg) {
 	// short for processed message.
+
+	if (msg === ".o"){
+		const username = this.get("username");
+		for(var i in users){
+			users[i].emit("open line", username);
+		}
+	}
+
+	if (msg === ".c"){
+		const username = this.get("username");
+		for(var i in users){
+			users[i].emit("close line", username);
+		}
+	}
+
 	let p_msg = msgeval.process(msg);
  	// here is a function that takes in a message and spits back
 	// a cleaned up message or a "hmm. its math / dice / a name change"
@@ -81,7 +94,6 @@ users[username] = this;
 				users[i].emit("message", username, msg);
 			}
 
-
 		//if type = math: what if it calculates as it types? radical.
 		//if type = roll: what if it had a scrambler CSS while you typed it.
 
@@ -94,6 +106,7 @@ users[username] = this;
 			}
 		}
 
+		// this is broken, but also not high priority for me.
 		if (p_msg[0] === "help"){
 			for(var i in users) {
 				users[i].emit("message", "system", "You're on your own bud.");
@@ -109,15 +122,28 @@ users[username] = this;
 
 // and so it begins
 .on("open line", function(){
-	users[i].emit("open line", this.get("username"))
+	for(var i in users) {
+		users[i].emit("open line", this.get("username"));
+	}
 })
 
 .on("close line", function(){
-	users[i].emit("close line", this.get("username"))
+	for(var i in users) {
+		users[i].emit("close line", this.get("username"));
+	}
 })
 
-.on("update line", function(){
-	users[i].emit("update line", this.get("username"))
+.on("update line", function(msg){
+	// If the first character is '=', try to dynamically do math?
+	for(var i in users) {
+		users[i].emit("update line", msg, this.get("username"));
+	}
+})
+
+.on("publish line", function(){
+	for(var i in users) {
+		users[i].emit("publish line", this.get("username"));
+	}
 });
 
 

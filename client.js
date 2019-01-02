@@ -20,6 +20,59 @@ socket.on("error", () => {
 
 socket.of("chat").on("message", addMessage);
 
+socket.of("chat").on('open line', function(name) {
+		placement = document.getElementById("messageList");
+
+		let newDiv = document.createElement("div"),
+			newName = document.createElement("li"),
+			newMess = document.createElement("li");
+
+		newDiv.id = 'id:'+name;
+		newName.classList.add("name");
+		// newName.style.color = color;
+		// newDiv.classList.add("slidein");
+
+		newName.textContent = name + ": ";
+		newMess.textContent = "";
+
+		newDiv.appendChild(newName);
+		newDiv.appendChild(newMess);
+
+		placement.appendChild(newDiv);
+		// scrollToBottom();
+	});
+
+socket.of("chat").on('update line', function(msg = "", name, live_type) {
+	namedelement = document.getElementById('id:'+name).children[1];
+	if (namedelement !== null) {
+			namedelement.textContent = msg;
+	}
+});
+
+socket.of("chat").on('publish line', function(name) {
+	var div = document.getElementById('id:' + name);
+	div.id = "";
+	div.classList.add("fadein");
+	div.classList.remove("slidein")
+	if (document.hidden){changeTitle();} // If tabbed out, notification ping.
+});
+
+socket.of("chat").on('close line', function(name) {
+	closedMess = document.getElementById('id:'+name);
+	// closedMess.classList.remove("slidein");
+	// closedMess.classList.add("blipout");
+
+	function delaykill(){
+		if (closedMess !== null){
+			closedMess.remove();
+			closedMess.id = "";
+		}
+	}
+
+	closetimeout = setTimeout(delaykill, 305);
+});
+
+
 function addMessage(fromStr, msg) {
 	// Add a message to the DOM
 	let p = $('<p class="message">');
@@ -69,50 +122,7 @@ function logout() {
 		});
 }
 
-socket.on('new message', function(name) {
-    placement = document.getElementById("messageList");
-    let newDiv = document.createElement("div"),
-      newName = document.createElement("li"),
-      newMess = document.createElement("li");
 
-    newDiv.id = 'id:'+name;
-
-    newName.classList.add("name");
-    newName.style.color = color;
-
-    newDiv.classList.add("slidein");
-
-    newName.textContent = name + ": ";
-    newMess.textContent = "";
-
-    newDiv.appendChild(newName);
-    newDiv.appendChild(newMess);
-
-    placement.appendChild(newDiv);
-    scrollToBottom();
-  });
-
-socket.on('update message', function(msg = "", name, live_type) {
-  namedelement = document.getElementById('id:'+name).children[1];
-  if (namedelement !== null) {
-      namedelement.textContent = msg;
-  }
-});
-
-socket.on('publish message', function(name) {
-  var div = document.getElementById('id:' + name);
-  div.id = "";
-  div.classList.add("fadein");
-  div.classList.remove("slidein")
-  if (document.hidden){changeTitle();} // If tabbed out, notification ping.
-});
-
-socket.on('close message', function(name) {
-  closedMess = document.getElementById('id:'+name);
-  closedMess.classList.remove("slidein");
-  closedMess.classList.add("blipout");
-  closetimeout = setTimeout(finalClose, 305);
-});
 
 
 
@@ -131,18 +141,19 @@ $(() => {
 	// Selects form when enter pressed.
 	var sendform = document.getElementById("message");
 
+
+
 	function enter_detect(e){
     if (e.which === 13 || e.keyCode === 13) {
       if(document.activeElement === document.body){
         sendform.focus();
-				//if a line is not already open:
-				//socket.of("chat").emit('open line');
+				socket.of("chat").emit('open line');
       }
       else if (document.activeElement == sendform){
         socket.of("chat").emit('update line', sendform.value);
         socket.of("chat").emit('message', sendform.value);
 				sendform.value = "";
-				socket.emit('close line');
+				socket.of("chat").emit('close line');
 	      sendform.blur();
 			}
 		}
@@ -151,19 +162,18 @@ $(() => {
 	function form_focus(e){
     if (document.activeElement === sendform){
 			//if a line is not already open:
-      //socket.emit('open message', live_type)
 		}
 
 		// If the sendform is no longer focused.
 		else{
 			// if a line is open, and it's contents are empty
-      socket.emit('close line');
+      socket.of("chat").emit('close line');
     }
   }
 
 	function form_keyup(e){
 		if (document.activeElement === sendform)
-			socket.emit('update line', sendform.value);
+			socket.of("chat").emit('update line', sendform.value);
 	}
 
 	// Declaring all the event listeners.
