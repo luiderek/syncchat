@@ -63,7 +63,7 @@ socketServer.of("chat").on("login", function() {
 }
 
 ).on("message", function(msg) {
-	// short for processed message. it's not a good naming scheme i know.
+	// short for processed message. 
 	let p_msg = msgeval.process(msg);
  	// here is a function that takes in a message and spits back
 	// a cleaned up message or a "hmm. its math / dice / a name change"
