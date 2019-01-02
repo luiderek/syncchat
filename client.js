@@ -73,10 +73,18 @@ socket.of("chat").on('close line', function(name) {
 			closedMess.id = ".";
 		}
 	}
-
 	closetimeout = setTimeout(delaykill, 305);
 });
 
+socket.of("chat").on('server message', function(msg, color = "##8b8bff") {
+	placement = document.getElementById("messageList");
+	let newMess = document.createElement("li");
+	newMess.style.color = color;
+	newContent = document.createTextNode(msg);
+	newMess.appendChild(newContent);
+	placement.appendChild(newMess);
+	scrollToBottom();
+});
 
 function addMessage(fromStr, msg) {
 	// Add a message to the DOM

@@ -40,19 +40,10 @@ socketServer.on("disconnect", (socket) => {
 // Setup event handlers on the WebSocketServerWrapper for the "chat" channel
 // Soon I'll have to replace "chat" with rooms themselves.
 socketServer.of("chat").on("login", function() {
-/* `this` refers to the WebSocketWrapper "chat" channel, which is unique
-	for a given WebSocket */
 username = names.gen_name();
-
 while(username === "system" || (users[username] && users[username] !== this)){
 	username = names.gen_name();
 }
-
-/*for(var i in users) {
-	users[i].emit("message", "system", username + " has connected.");
-}*/
-
-// Save the username
 this.set("username", username);
 // Note that the "chat" channel is actually stored in `users[username]`
 users[username] = this;
@@ -70,7 +61,7 @@ users[username] = this;
 	}
 
 	else if (p_msg[1] !== ""){
-		newmsg = "Type: " + p_msg[0] + " | " + p_msg[1];
+		newmsg = p_msg[0] + " | " + p_msg[1];
 		if (p_msg[0] === "math")
 			newmsg = p_msg[1];
 		const sender = this.get("username");
@@ -98,13 +89,12 @@ users[username] = this;
 		}
 
 	else if (p_msg[1] !== ""){
-		msg = "Type: " + p_msg[0] + " | " + p_msg[1];
+		msg = + p_msg[0] + " | " + p_msg[1];
 		const username = this.get("username");
 			for(var i in users) {
 				users[i].emit("message", username, msg);
 			}
 
-		//if type = math: what if it calculates as it types? radical.
 		//if type = roll: what if it had a scrambler CSS while you typed it.
 
 		if (p_msg[0] === "name"){
@@ -152,11 +142,48 @@ users[username] = this;
 	}
 })
 
-.on("publish line", function(){
-	for(var i in users) {
-		users[i].emit("publish line", this.get("username"));
+.on("publish line", function(msg){
+
+	let p_msg = msgeval.process(msg);
+
+	if (p_msg[0] == "none" && p_msg[1] !== ""){
+		const username = this.get("username");
+			for(var i in users) {
+				users[i].emit("update line", username, msg);
+				users[i].emit("publish line", username, msg);
+			}
+		}
+
+	else if (p_msg[1] !== ""){
+		msg = p_msg[0] + " | " + p_msg[1];
+		const username = this.get("username");
+			for(var i in users) {
+				users[i].emit("update line", username, msg);
+			}
+
+		if (p_msg[0] === "name"){
+			let oldusername = this.get("username")
+			this.set("username", p_msg[1])
+
+			for(var i in users) {
+				users[i].emit("server message", oldusername + " has changed their name to " + p_msg[1] + ".");
+			}
+		}
+		else {
+			for(var i in users) {
+				users[i].emit("publish line", this.get("username"));
+			}
+		}
 	}
-});
+
+		// this is broken, but also not high priority for me.
+		/*
+		if (p_msg[0] === "help"){
+			for(var i in users) {
+				users[i].emit("message", "system", "You're on your own bud.");
+			}
+		*/
+})
 
 
 function httpResHandler(req, res) {
