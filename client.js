@@ -21,6 +21,9 @@ socket.on("error", () => {
 socket.of("chat").on("message", addMessage);
 
 socket.of("chat").on('open line', function(name) {
+	// There's a weird thing with pushing enter really fast. Ugh.
+	if (document.getElementById("id:"+name) === null){
+
 		placement = document.getElementById("messageList");
 
 		let newDiv = document.createElement("div"),
@@ -30,7 +33,7 @@ socket.of("chat").on('open line', function(name) {
 		newDiv.id = 'id:'+name;
 		newName.classList.add("name");
 		// newName.style.color = color;
-		// newDiv.classList.add("slidein");
+		newDiv.classList.add("slidein");
 
 		newName.textContent = name + ": ";
 		newMess.textContent = "";
@@ -40,7 +43,8 @@ socket.of("chat").on('open line', function(name) {
 
 		placement.appendChild(newDiv);
 		// scrollToBottom();
-	});
+	}
+});
 
 socket.of("chat").on('update line', function(msg = "", name, live_type) {
 	namedelement = document.getElementById('id:'+name).children[1];
@@ -51,21 +55,21 @@ socket.of("chat").on('update line', function(msg = "", name, live_type) {
 
 socket.of("chat").on('publish line', function(name) {
 	var div = document.getElementById('id:' + name);
-	div.id = "";
+	div.id = ".";
 	div.classList.add("fadein");
-	div.classList.remove("slidein")
-	if (document.hidden){changeTitle();} // If tabbed out, notification ping.
+	div.classList.remove("slidein");
+	//if (document.hidden){changeTitle();} // If tabbed out, notification ping.
 });
 
 socket.of("chat").on('close line', function(name) {
 	closedMess = document.getElementById('id:'+name);
-	// closedMess.classList.remove("slidein");
-	// closedMess.classList.add("blipout");
+	closedMess.classList.remove("slidein");
+	closedMess.classList.add("blipout");
 
 	function delaykill(){
 		if (closedMess !== null){
 			closedMess.remove();
-			closedMess.id = "";
+			closedMess.id = ".";
 		}
 	}
 
@@ -129,47 +133,56 @@ function logout() {
 $(() => {
 
 	$("#newMessage").on("submit", function sendMessage(e) {
-		socket.of("chat").emit("message", $("#message").val() );
-		$("#message").val("").focus();
+		// socket.of("chat").emit("message", $("#message").val() );
 		e.preventDefault();
 	});
 
 	login();
 
-	addMessage("system", "Welcome!");
+	//addMessage("system", "Welcome!");
 
 	// Selects form when enter pressed.
 	var sendform = document.getElementById("message");
 
+	var line_open_status = 0;
 
-
-	function enter_detect(e){
+	function enter_focus(e, type = 0){
     if (e.which === 13 || e.keyCode === 13) {
-      if(document.activeElement === document.body){
+      if(document.activeElement === document.body)
         sendform.focus();
-				socket.of("chat").emit('open line');
-      }
       else if (document.activeElement == sendform){
-        socket.of("chat").emit('update line', sendform.value);
-        socket.of("chat").emit('message', sendform.value);
+        // socket.of("chat").emit('message', sendform.value);
+
+				if (sendform.value !== ""){
+					socket.of("chat").emit('update line', sendform.value);
+					socket.of("chat").emit('publish line');
+				}
+
 				sendform.value = "";
-				socket.of("chat").emit('close line');
 	      sendform.blur();
 			}
 		}
-  }
 
-	function form_focus(e){
-    if (document.activeElement === sendform){
-			//if a line is not already open:
+		function gain_focus(){
+			if (line_open_status === 0)
+				socket.of("chat").emit('open line');
+				line_open_status = 1;
+			}
+
+
+		function lose_focus(){
+			if (sendform.value === "" && line_open_status === 1)
+				socket.of("chat").emit('close line');
+				line_open_status = 0;
+			}
+
+		if (document.activeElement === sendform){
+			gain_focus();
 		}
-
-		// If the sendform is no longer focused.
 		else{
-			// if a line is open, and it's contents are empty
-      socket.of("chat").emit('close line');
-    }
-  }
+			lose_focus();
+		}
+	}
 
 	function form_keyup(e){
 		if (document.activeElement === sendform)
@@ -178,9 +191,10 @@ $(() => {
 
 	// Declaring all the event listeners.
 	sendform.addEventListener('keyup', form_keyup);
-	sendform.addEventListener('focus', form_focus, true);
-	sendform.addEventListener('blur', form_focus, true);
-	document.body.addEventListener('keyup', enter_detect);
+
+	sendform.addEventListener('focus', enter_focus);
+	sendform.addEventListener('blur', enter_focus);
+	document.body.addEventListener('keyup', enter_focus, 1);
 
 
 });
