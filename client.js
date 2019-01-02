@@ -18,10 +18,9 @@ socket.on("error", () => {
 	socket.disconnect();
 });
 
-socket.of("chat").on("message", addMessage);
+//socket.of("chat").on("message", addMessage);
 
-socket.of("chat").on('open line', function(name) {
-	// There's a weird thing with pushing enter really fast. Ugh.
+socket.of("chat").on('open line', function(name, color) {
 	if (document.getElementById("id:"+name) === null){
 
 		placement = document.getElementById("messageList");
@@ -32,7 +31,7 @@ socket.of("chat").on('open line', function(name) {
 
 		newDiv.id = 'id:'+name;
 		newName.classList.add("name");
-		// newName.style.color = color;
+		newName.style.color = color;
 		newDiv.classList.add("slidein");
 
 		newName.textContent = name + ": ";
@@ -42,11 +41,11 @@ socket.of("chat").on('open line', function(name) {
 		newDiv.appendChild(newMess);
 
 		placement.appendChild(newDiv);
-		// scrollToBottom();
+		scrollToBottom();
 	}
 });
 
-socket.of("chat").on('update line', function(msg = "", name, live_type) {
+socket.of("chat").on('update line', function(msg = "", name) {
 	namedelement = document.getElementById('id:'+name).children[1];
 	if (namedelement !== null) {
 			namedelement.textContent = msg;
@@ -58,7 +57,8 @@ socket.of("chat").on('publish line', function(name) {
 	div.id = ".";
 	div.classList.add("fadein");
 	div.classList.remove("slidein");
-	//if (document.hidden){changeTitle();} // If tabbed out, notification ping.
+	// If tabbed out, change the title.
+	if (document.hidden){changeTitle();}
 });
 
 socket.of("chat").on('close line', function(name) {
@@ -76,7 +76,7 @@ socket.of("chat").on('close line', function(name) {
 	closetimeout = setTimeout(delaykill, 305);
 });
 
-
+/*
 function addMessage(fromStr, msg) {
 	// Add a message to the DOM
 	let p = $('<p class="message">');
@@ -93,6 +93,7 @@ function addMessage(fromStr, msg) {
 	if(list.scrollHeight - list.scrollTop - list.clientHeight <= 30)
 		list.scrollTop = list.scrollHeight;
 }
+*/
 
 function login() {
 	$("#loginButton").hide();
@@ -102,7 +103,6 @@ function login() {
 		.then(() => {
 			// Login succeeded
 			$("#logoutButton, #newMessage").show();
-			addMessage("system", "You have been logged in");
 			$("#message").val("").focus();
 		})
 		.catch((err) => {
@@ -119,7 +119,6 @@ function logout() {
 	// Send request to logout
 	socket.of("chat").request("logout")
 		.then(() => {
-			addMessage("system", "You have been logged out");
 		})
 		.catch((err) => {
 			console.error(err);
@@ -127,8 +126,20 @@ function logout() {
 }
 
 
+function scrollToBottom(){
+	let isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 30;
+	if (isScrolledToBottom){
+		var scroll_interval = setInterval(function(){messageDiv.scrollTop = messageDiv.scrollHeight;}, 25);
+		var scroll_timeout = setTimeout(function(){clearInterval(scroll_interval)}, 300);
+	}
+}
 
-
+function changeTitle(){
+	update_count++;
+	var newTitle = '(' + update_count +') ' + title;
+	document.title = newTitle;
+	// Maybe get it to flash the favicon as well? 
+}
 
 $(() => {
 
@@ -151,11 +162,11 @@ $(() => {
       if(document.activeElement === document.body)
         sendform.focus();
       else if (document.activeElement == sendform){
-        // socket.of("chat").emit('message', sendform.value);
-
 				if (sendform.value !== ""){
-					socket.of("chat").emit('update line', sendform.value);
-					socket.of("chat").emit('publish line');
+					//socket.of("chat").emit('update line', sendform.value);
+					socket.of("chat").emit('rollupdate', sendform.value);
+					socket.of("chat").emit('publish line', sendform.value);
+					//socket.of("chat").emit('message', sendform.value);
 				}
 
 				sendform.value = "";
@@ -186,7 +197,7 @@ $(() => {
 
 	function form_keyup(e){
 		if (document.activeElement === sendform)
-			socket.of("chat").emit('update line', sendform.value);
+			socket.of("chat").emit('rollupdate', sendform.value);
 	}
 
 	// Declaring all the event listeners.

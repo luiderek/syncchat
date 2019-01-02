@@ -58,23 +58,34 @@ this.set("username", username);
 users[username] = this;
 })
 
+.on("rollupdate", function(msg){
+	let p_msg = msgeval.process(msg);
+	// msg[0] is type, msg[1] is trimmed output.
+
+	if (p_msg[0] == "none"){
+		const sender = this.get("username");
+		for(var i in users) {
+			users[i].emit("update line", msg, sender);
+		}
+	}
+
+	else if (p_msg[1] !== ""){
+		newmsg = "Type: " + p_msg[0] + " | " + p_msg[1];
+		if (p_msg[0] === "math")
+			newmsg = p_msg[1];
+
+		const sender = this.get("username");
+		for(var i in users) {
+			users[i].emit("update line", newmsg, sender);
+		}
+
+		//if type = math: what if it calculates as it types? radical.
+		//if type = roll: what if it had a scrambler CSS while you typed it.
+	}
+})
+
 .on("message", function(msg) {
 	// short for processed message.
-
-	if (msg === ".o"){
-		const username = this.get("username");
-		for(var i in users){
-			users[i].emit("open line", username);
-		}
-	}
-
-	if (msg === ".c"){
-		const username = this.get("username");
-		for(var i in users){
-			users[i].emit("close line", username);
-		}
-	}
-
 	let p_msg = msgeval.process(msg);
  	// here is a function that takes in a message and spits back
 	// a cleaned up message or a "hmm. its math / dice / a name change"
@@ -122,8 +133,10 @@ users[username] = this;
 
 // and so it begins
 .on("open line", function(){
+	const sender = this.get("username");
+	const color = names.gen_color(this.get("username"));
 	for(var i in users) {
-		users[i].emit("open line", this.get("username"));
+		users[i].emit("open line", sender, color);
 	}
 })
 

@@ -3,6 +3,8 @@ function evaluatorModule(msg) {
   let type = "none";
   msg = ''+msg; msg = msg.trim();
 
+  var mexp = require('math-expression-evaluator');
+
   // function that returns the [type,trimed] of message.
   this.process = function(msg){
     switch (msg.substring(0,1)){
@@ -45,6 +47,11 @@ function evaluatorModule(msg) {
       case "=":
         type = "math";
         msg = msg.substring(1,msg.length);
+        try {
+          var value = mexp.eval(msg);
+          msg = msg + " = " + value;
+          send_message("txt");
+        } catch (error) {}
         break;
 
       default:

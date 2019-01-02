@@ -19,35 +19,45 @@
 			button, input {
 				padding: 5px 10px;
 			}
-			#messageList {
-				margin: 0 auto;
-				overflow: auto;
-				border: 1px #ccc solid;
-				padding: 5px;
-				height: 90%;
-			}
-			.message {
-				margin: 0;
-				width: auto;
-			}
-			.message > .from {
-				font-weight: bold;
-				color: blue;
-			}
-			.message > .from.me {
-				color: red;
-			}
-			.message > .from.system {
-				color: purple;
-			}
-			#newMessage {
-				padding: 20px 0px;
-				display: none;
-			}
+
 
 			li{
 	    	list-style-type: none;
 				display: inline-block;
+	    }
+
+			#messageList {
+				margin: 0 auto;
+				overflow: auto;
+				border: 1px #ccc solid;
+				padding: 8px;
+				height: 90%;
+				padding-right: 6px;
+			}
+			
+			.message {
+				margin: 0;
+				width: auto;
+			}
+
+			.message > .from {
+				font-weight: bold;
+				color: blue;
+			}
+
+			.message > .from.me {
+				color: red;
+			}
+
+			.message > .from.system {
+				color: purple;
+			}
+
+			.name{
+	      font-weight: bold;
+	      left: 0%;
+				margin: auto;
+				padding-right: 8px;
 	    }
 
 			.fadein{
