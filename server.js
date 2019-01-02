@@ -39,27 +39,25 @@ socketServer.on("disconnect", (socket) => {
 
 // Setup event handlers on the WebSocketServerWrapper for the "chat" channel
 // Soon I'll have to replace "chat" with rooms themselves.
-socketServer.of("chat").on("login", function() {
-	/* `this` refers to the WebSocketWrapper "chat" channel, which is unique
-		for a given WebSocket */
+socketServer.of("chat")
+.on("login", function() {
+/* `this` refers to the WebSocketWrapper "chat" channel, which is unique
+	for a given WebSocket */
+username = names.gen_name();
 
+while(username === "system" || (users[username] && users[username] !== this)){
 	username = names.gen_name();
+}
 
-	while(username === "system" ||
-		(users[username] && users[username] !== this)){
-			username = names.gen_name();
-		}
+for(var i in users) {
+	users[i].emit("message", "system", username + " has connected.");
+}
 
-		// Notify all other users of user login
-	for(var i in users) {
-		users[i].emit("message", "system", username + " has connected.");
-	}
+// Save the username
+this.set("username", username);
 
-	// Save the username
-	this.set("username", username);
-
-	// Note that the "chat" channel is actually stored in `users[username]`
-	users[username] = this;
+// Note that the "chat" channel is actually stored in `users[username]`
+users[username] = this;
 })
 
 .on("message", function(msg) {
@@ -75,7 +73,7 @@ socketServer.of("chat").on("login", function() {
 				users[i].emit("message", username, msg);
 			}
 		}
-// test
+
 	else if (p_msg[1] !== ""){
 		msg = "Type: " + p_msg[0] + " | " + p_msg[1];
 		const username = this.get("username");
@@ -83,9 +81,9 @@ socketServer.of("chat").on("login", function() {
 				users[i].emit("message", username, msg);
 			}
 
+
 		//if type = math: what if it calculates as it types? radical.
 		//if type = roll: what if it had a scrambler CSS while you typed it.
-
 
 		if (p_msg[0] === "name"){
 			let oldusername = this.get("username")
@@ -107,7 +105,21 @@ socketServer.of("chat").on("login", function() {
 .on("logout", function() {
 	const username = this.get("username");
 	userLogout(username);
+})
+
+// and so it begins
+.on("open line", function(){
+	users[i].emit("open line", this.get("username"))
+})
+
+.on("close line", function(){
+	users[i].emit("close line", this.get("username"))
+})
+
+.on("update line", function(){
+	users[i].emit("update line", this.get("username"))
 });
+
 
 function httpResHandler(req, res) {
 	// Serve index.html and client.js

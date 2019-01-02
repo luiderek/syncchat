@@ -69,6 +69,53 @@ function logout() {
 		});
 }
 
+socket.on('new message', function(name) {
+    placement = document.getElementById("messageList");
+    let newDiv = document.createElement("div"),
+      newName = document.createElement("li"),
+      newMess = document.createElement("li");
+
+    newDiv.id = 'id:'+name;
+
+    newName.classList.add("name");
+    newName.style.color = color;
+
+    newDiv.classList.add("slidein");
+
+    newName.textContent = name + ": ";
+    newMess.textContent = "";
+
+    newDiv.appendChild(newName);
+    newDiv.appendChild(newMess);
+
+    placement.appendChild(newDiv);
+    scrollToBottom();
+  });
+
+socket.on('update message', function(msg = "", name, live_type) {
+  namedelement = document.getElementById('id:'+name).children[1];
+  if (namedelement !== null) {
+      namedelement.textContent = msg;
+  }
+});
+
+socket.on('publish message', function(name) {
+  var div = document.getElementById('id:' + name);
+  div.id = "";
+  div.classList.add("fadein");
+  div.classList.remove("slidein")
+  if (document.hidden){changeTitle();} // If tabbed out, notification ping.
+});
+
+socket.on('close message', function(name) {
+  closedMess = document.getElementById('id:'+name);
+  closedMess.classList.remove("slidein");
+  closedMess.classList.add("blipout");
+  closetimeout = setTimeout(finalClose, 305);
+});
+
+
+
 $(() => {
 
 	$("#newMessage").on("submit", function sendMessage(e) {
@@ -116,7 +163,7 @@ $(() => {
 
 	function form_keyup(e){
 		if (document.activeElement === sendform)
-			socket.emit('update line', sendform.value, live_type);
+			socket.emit('update line', sendform.value);
 	}
 
 	// Declaring all the event listeners.
