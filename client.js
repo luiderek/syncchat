@@ -1,24 +1,23 @@
-"use strict";
-
 const WebSocketWrapper = require("ws-wrapper");
-
-// Create WebSocketWrapper
 window.socket = new WebSocketWrapper(
 	new WebSocket("ws://" + location.host)
 );
+
 socket.on("disconnect", function(wasOpen) {
 	// Check `wasOpen` flag, so we don't try to logout on each disconnection
 	if(wasOpen)
 		logout();
 	// Auto-reconnect
-	console.log("Reconnecting in 5 secs...");
+	console.log("Reconnecting in 5 secs..");
 	setTimeout(() => {
 		socket.bind(new WebSocket("ws://" + location.host) );
 	}, 5000);
 });
+
 socket.on("error", () => {
 	socket.disconnect();
 });
+
 socket.of("chat").on("message", addMessage);
 
 function addMessage(fromStr, msg) {
@@ -79,5 +78,7 @@ $(() => {
 		e.preventDefault();
 	});
 
-	addMessage("system", "Welcome! Please pick a username and login.");
+	login();
+
+	addMessage("system", "Welcome!");
 });

@@ -7,6 +7,12 @@ const http = require("http")
 	, WebSocketServerWrapper = require("ws-server-wrapper")
 	, modConcat = require("module-concat");
 
+const nameimport = require("./server/names.js");
+const names = new nameimport();
+
+const msg_processer = require("./server/processmessage.js");
+const msgeval = new msg_processer();
+
 // Create new HTTP server and a new WebSocketServer
 const server = http.createServer(httpResHandler)
 	, socketServer = new WebSocketServerWrapper(
@@ -20,46 +26,85 @@ function userLogout(username) {
 		delete users[username];
 		// Notify all other users
 		for(var i in users) {
-			users[i].emit("message", "system", username + " has logged out");
+			users[i].emit("message", "system", username + " has disconnected.");
 		}
 	}
 }
-// Upon disconnect, ensure user is logged out
+
+// Upon disconnect, log out user.
 socketServer.on("disconnect", (socket) => {
 	const username = socket.get("username");
 	userLogout(username);
 });
 
 // Setup event handlers on the WebSocketServerWrapper for the "chat" channel
-socketServer.of("chat").on("login", function(username) {
+// Soon I'll have to replace "chat" with rooms themselves.
+socketServer.of("chat").on("login", function() {
 	/* `this` refers to the WebSocketWrapper "chat" channel, which is unique
 		for a given WebSocket */
-	if(username === "system" ||
-		(users[username] && users[username] !== this) )
-	{
-		// Error is sent back to the client
-		throw new Error(`Username '${username}' is taken!`);
-	} else {
+
+	username = names.gen_name();
+
+	while(username === "system" ||
+		(users[username] && users[username] !== this)){
+			username = names.gen_name();
+		}
+
 		// Notify all other users of user login
-		for(var i in users) {
-			users[i].emit("message", "system", username + " has logged in");
-		}
-		// Save the username
-		this.set("username", username);
-		// Note that the "chat" channel is actually stored in `users[username]`
-		users[username] = this;
+	for(var i in users) {
+		users[i].emit("message", "system", username + " has connected.");
 	}
-}).on("message", function(msg) {
-	const username = this.get("username");
-	if(username) {
-		// We're logged in, so relay the message to all clients
-		for(var i in users) {
-			users[i].emit("message", username, msg);
+
+	// Save the username
+	this.set("username", username);
+
+	// Note that the "chat" channel is actually stored in `users[username]`
+	users[username] = this;
+}
+
+).on("message", function(msg) {
+	// short for processed message. it's not a good naming scheme i know.
+	let p_msg = msgeval.process(msg);
+ 	// here is a function that takes in a message and spits back
+	// a cleaned up message or a "hmm. its math / dice / a name change"
+	// msg[0] is type, msg[1] is trimmed output.
+
+	if (p_msg[0] == "none" && p_msg[1] !== ""){
+		const username = this.get("username");
+			for(var i in users) {
+				users[i].emit("message", username, msg);
+			}
 		}
-	} else {
-		throw new Error("Please log in first!");
+// test
+	else if (p_msg[1] !== ""){
+		msg = "Type: " + p_msg[0] + " | " + p_msg[1];
+		const username = this.get("username");
+			for(var i in users) {
+				users[i].emit("message", username, msg);
+			}
+
+		//if type = math: what if it calculates as it types? radical.
+		//if type = roll: what if it had a scrambler CSS while you typed it.
+
+
+		if (p_msg[0] === "name"){
+			let oldusername = this.get("username")
+			this.set("username", p_msg[1])
+
+			for(var i in users) {
+				users[i].emit("message", "system", oldusername + " has changed their name to "+ p_msg[1] +".");
+			}
+		}
+
+		if (p_msg[0] === "help"){
+			for(var i in users) {
+				users[i].emit("message", "system", "You're on your own bud.");
+			}
+		}
 	}
-}).on("logout", function() {
+})
+
+.on("logout", function() {
 	const username = this.get("username");
 	userLogout(username);
 });
@@ -82,10 +127,6 @@ function httpResHandler(req, res) {
 		res.end("Not Found");
 	}
 }
-
-var names = require('names')
-// names.gen_name()
-// names.gen_color()
 
 // Start the server after building client_build.js
 const PORT = process.env.PORT || 3000;
