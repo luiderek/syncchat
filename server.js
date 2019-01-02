@@ -107,9 +107,9 @@ users[username] = this;
 		}
 
 		// this is broken, but also not high priority for me.
-		if (p_msg[0] === "help"){
+		if (p_msg[0].substring(0,4) === "help"){
 			for(var i in users) {
-				users[i].emit("message", "system", "You're on your own bud.");
+				users[i].emit("server message", "You're on your own bud.");
 			}
 		}
 	}

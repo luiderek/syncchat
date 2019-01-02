@@ -28,13 +28,10 @@ function evaluatorModule(msg) {
             break;
 
           case msg.substring(1,5) === "help":
-            msg = msg.substring(3,msg.length);
+            msg = msg.substring(3, msg.length);
           case msg.substring(1,2) === "?":
-            msg = msg.substring(2,msg.length).trim();
+            msg = msg.substring(2, msg.length);
             type = "help";
-            if (msg = ""){
-              msg = "placeholdertext";
-            }
             break;
 
           default:
