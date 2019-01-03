@@ -4,14 +4,18 @@
   "description": "A chatroom where you can see what others type.",
   "main": "server.js",
   "dependencies": {
+    "@dsibilly/dice-tower": "^1.2.0",
+    "cerebro-converter": "^1.0.9",
     "koa": "^2.6.2",
     "koa-router": "^7.4.0",
+    "linkifyjs": "^2.1.7",
+    "math-expression-evaluator": "^1.2.17",
     "module-concat": "^2.3.0",
+    "msgdown": "^1.0.1",
+    "seedrandom": "^2.4.4",
     "ws": "^6.1.2",
     "ws-server-wrapper": "^1.4.1",
-    "ws-wrapper": "^1.7.0",
-    "seedrandom": "^2.4.4",
-    "math-expression-evaluator": "^1.2.17"
+    "ws-wrapper": "^1.7.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.2"
