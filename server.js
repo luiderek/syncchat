@@ -56,7 +56,7 @@ socketServer.of("chat").on("login", function() {
 	if (p_msg[0] == "none"){
 		const sender = this.get("username");
 		for(var i in users) {
-			users[i].emit("update line", msg, sender);
+			users[i].emit("update line", p_msg[1], sender);
 		}
 	}
 
@@ -169,7 +169,14 @@ socketServer.of("chat").on("login", function() {
 				users[i].emit("server message", oldusername + " has changed their name to " + p_msg[1] + ".");
 			}
 		}
-		else {
+		else if (p_msg[0] === "roll"){
+			const criticalfail = diceTower.roll(msg.substring(1,msg.length)).result
+			for(var i in users) {
+				users[i].emit("publish line", this.get("username"));
+				users[i].emit("server message", criticalfail);
+			}
+		}
+		else if(true){
 			for(var i in users) {
 				users[i].emit("publish line", this.get("username"));
 			}
@@ -184,6 +191,9 @@ socketServer.of("chat").on("login", function() {
 }
 */
 })
+
+
+
 
 
 function httpResHandler(req, res) {

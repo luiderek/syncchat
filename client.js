@@ -48,7 +48,7 @@ socket.of("chat").on('open line', function(name, color) {
 socket.of("chat").on('update line', function(msg = "", name) {
 	namedelement = document.getElementById('id:'+name).children[1];
 	if (namedelement !== null) {
-		namedelement.textContent = msg;
+		namedelement.innerHTML = msg;
 	}
 });
 

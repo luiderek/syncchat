@@ -7,7 +7,12 @@ function evaluatorModule(msg) {
   const maxmsglength = 300;
   msg = msg.substring(0, Math.min(maxmsglength, msg.length));
 
-  var mexp = require('math-expression-evaluator');
+  const mexp = require('math-expression-evaluator');
+  const down = require('msgdown');
+  const cleanHTML = require('sanitize-html');
+  const linkifyHtml = require('linkifyjs/html');
+
+
 
   // function that returns the [type,trimed] of message.
   this.process = function(msg){
@@ -51,12 +56,29 @@ function evaluatorModule(msg) {
         try {
           var value = mexp.eval(msg);
           msg = msg + " = " + value;
-          send_message("txt");
         } catch (error) {}
         break;
 
       default:
         type = "none";
+
+        msg = down(msg, {
+          bold: {delimiter: '*', tag: 'strong'},
+          italic: {delimiter: '/', tag: 'em'},
+          underline: {delimiter: '_', tag: 'u'},
+          strike: {delimiter: '~', tag: 'del'},
+        })
+
+        msg = linkifyHtml(msg, {
+          defaultProtocol: 'https'
+        });
+
+        msg = cleanHTML(msg, {
+          allowedTags: [ 'em', 'del', 'strong', 'a', 'u'],
+          allowedAttributes: {
+            'a': [ 'href' ]
+            }
+        });
         break;
     }
     return [type,msg];
