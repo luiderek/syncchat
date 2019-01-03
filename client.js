@@ -6,7 +6,7 @@ window.socket = new WebSocketWrapper(
 socket.on("disconnect", function(wasOpen) {
 	// Check `wasOpen` flag, so we don't try to logout on each disconnection
 	if(wasOpen)
-		logout();
+	logout();
 	// Auto-reconnect
 	console.log("Reconnecting in 5 secs..");
 	setTimeout(() => {
@@ -26,8 +26,8 @@ socket.of("chat").on('open line', function(name, color) {
 		placement = document.getElementById("messageList");
 
 		let newDiv = document.createElement("div"),
-			newName = document.createElement("li"),
-			newMess = document.createElement("li");
+		newName = document.createElement("li"),
+		newMess = document.createElement("li");
 
 		newDiv.id = 'id:'+name;
 		newName.classList.add("name");
@@ -48,7 +48,7 @@ socket.of("chat").on('open line', function(name, color) {
 socket.of("chat").on('update line', function(msg = "", name) {
 	namedelement = document.getElementById('id:'+name).children[1];
 	if (namedelement !== null) {
-			namedelement.textContent = msg;
+		namedelement.textContent = msg;
 	}
 });
 
@@ -91,16 +91,16 @@ function addMessage(fromStr, msg) {
 	let p = $('<p class="message">');
 	let from = $('<span class="from">');
 	if(fromStr === "system")
-		from.addClass("system");
+	from.addClass("system");
 	else if(fromStr === $("#username").val() )
-		from.addClass("me");
+	from.addClass("me");
 	from.append(fromStr + ":");
 	p.append(from);
 	p.append(" " + msg);
 	let list = $("#messageList").append(p)[0];
 	// Now scroll down automatically
 	if(list.scrollHeight - list.scrollTop - list.clientHeight <= 30)
-		list.scrollTop = list.scrollHeight;
+	list.scrollTop = list.scrollHeight;
 }
 
 
@@ -109,16 +109,16 @@ function login() {
 	$("#username").attr("disabled", "disabled");
 	// Send request to login
 	socket.of("chat").request("login", $("#username").val() )
-		.then(() => {
-			// Login succeeded
-			$("#logoutButton, #newMessage").show();
-			$("#message").val("").focus();
-		})
-		.catch((err) => {
-			// Login failed; just logout...
-			alert(err);
-			logout();
-		});
+	.then(() => {
+		// Login succeeded
+		$("#logoutButton, #newMessage").show();
+		$("#message").val("").focus();
+	})
+	.catch((err) => {
+		// Login failed; just logout...
+		alert(err);
+		logout();
+	});
 }
 
 function logout() {
@@ -127,12 +127,12 @@ function logout() {
 	$("#username").removeAttr("disabled");
 	// Send request to logout
 	socket.of("chat").request("logout")
-		.then(() => {
-			socket.of("chat").emit("close line");
-		})
-		.catch((err) => {
-			console.error(err);
-		});
+	.then(() => {
+		socket.of("chat").emit("close line");
+	})
+	.catch((err) => {
+		console.error(err);
+	});
 }
 
 
@@ -168,10 +168,10 @@ $(() => {
 	var line_open_status = 0;
 
 	function enter_focus(e, type = 0){
-    if (e.which === 13 || e.keyCode === 13) {
-      if(document.activeElement === document.body)
-        sendform.focus();
-      else if (document.activeElement == sendform){
+		if (e.which === 13 || e.keyCode === 13) {
+			if(document.activeElement === document.body)
+			sendform.focus();
+			else if (document.activeElement == sendform){
 				if (sendform.value !== ""){
 					//socket.of("chat").emit('update line', sendform.value);
 					socket.of("chat").emit('rollupdate', sendform.value);
@@ -180,22 +180,22 @@ $(() => {
 				}
 
 				sendform.value = "";
-	      sendform.blur();
+				sendform.blur();
 			}
 		}
 
 		function gain_focus(){
 			if (line_open_status === 0)
-				socket.of("chat").emit('open line');
-				line_open_status = 1;
-			}
+			socket.of("chat").emit('open line');
+			line_open_status = 1;
+		}
 
 
 		function lose_focus(){
 			if (sendform.value === "" && line_open_status === 1)
-				socket.of("chat").emit('close line');
-				line_open_status = 0;
-			}
+			socket.of("chat").emit('close line');
+			line_open_status = 0;
+		}
 
 		if (document.activeElement === sendform){
 			gain_focus();
@@ -207,7 +207,7 @@ $(() => {
 
 	function form_keyup(e){
 		if (document.activeElement === sendform)
-			socket.of("chat").emit('rollupdate', sendform.value);
+		socket.of("chat").emit('rollupdate', sendform.value);
 	}
 
 	// Declaring all the event listeners.

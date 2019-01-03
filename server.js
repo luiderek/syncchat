@@ -1,11 +1,11 @@
 /* This chat server uses "ws" for Node.js WebSockets.
-	"node-module-concat" is used to bundle the client-side code at run-time.
+"node-module-concat" is used to bundle the client-side code at run-time.
 */
 const http = require("http")
-	, fs = require("fs")
-	, WebSocketServer = require("ws").Server
-	, WebSocketServerWrapper = require("ws-server-wrapper")
-	, modConcat = require("module-concat");
+, fs = require("fs")
+, WebSocketServer = require("ws").Server
+, WebSocketServerWrapper = require("ws-server-wrapper")
+, modConcat = require("module-concat");
 
 const nameimport = require("./server/names.js");
 const names = new nameimport();
@@ -15,9 +15,9 @@ const msgeval = new msg_processer();
 
 // Create new HTTP server and a new WebSocketServer
 const server = http.createServer(httpResHandler)
-	, socketServer = new WebSocketServerWrapper(
-		new WebSocketServer({server: server})
-	);
+, socketServer = new WebSocketServerWrapper(
+	new WebSocketServer({server: server})
+);
 
 // Save all logged in `users`; keys are usernames
 var users = {};
@@ -40,13 +40,13 @@ socketServer.on("disconnect", (socket) => {
 // Setup event handlers on the WebSocketServerWrapper for the "chat" channel
 // Soon I'll have to replace "chat" with rooms themselves.
 socketServer.of("chat").on("login", function() {
-username = names.gen_name();
-while(username === "system" || (users[username] && users[username] !== this)){
 	username = names.gen_name();
-}
-this.set("username", username);
-// Note that the "chat" channel is actually stored in `users[username]`
-users[username] = this;
+	while(username === "system" || (users[username] && users[username] !== this)){
+		username = names.gen_name();
+	}
+	this.set("username", username);
+	// Note that the "chat" channel is actually stored in `users[username]`
+	users[username] = this;
 })
 
 .on("rollupdate", function(msg){
@@ -63,7 +63,7 @@ users[username] = this;
 	else if (p_msg[1] !== ""){
 		newmsg = p_msg[0] + " | " + p_msg[1];
 		if (p_msg[0] === "math")
-			newmsg = p_msg[1];
+		newmsg = p_msg[1];
 		const sender = this.get("username");
 		for(var i in users) {
 			users[i].emit("update line", newmsg, sender);
@@ -77,23 +77,23 @@ users[username] = this;
 .on("message", function(msg) {
 	// short for processed message.
 	let p_msg = msgeval.process(msg);
- 	// here is a function that takes in a message and spits back
+	// here is a function that takes in a message and spits back
 	// a cleaned up message or a "hmm. its math / dice / a name change"
 	// msg[0] is type, msg[1] is trimmed output.
 
 	if (p_msg[0] == "none" && p_msg[1] !== ""){
 		const username = this.get("username");
-			for(var i in users) {
-				users[i].emit("message", username, msg);
-			}
+		for(var i in users) {
+			users[i].emit("message", username, msg);
 		}
+	}
 
 	else if (p_msg[1] !== ""){
 		msg = + p_msg[0] + " | " + p_msg[1];
 		const username = this.get("username");
-			for(var i in users) {
-				users[i].emit("message", username, msg);
-			}
+		for(var i in users) {
+			users[i].emit("message", username, msg);
+		}
 
 		//if type = roll: what if it had a scrambler CSS while you typed it.
 
@@ -148,18 +148,18 @@ users[username] = this;
 
 	if (p_msg[0] == "none" && p_msg[1] !== ""){
 		const username = this.get("username");
-			for(var i in users) {
-				users[i].emit("update line", username, msg);
-				users[i].emit("publish line", username, msg);
-			}
+		for(var i in users) {
+			users[i].emit("update line", username, msg);
+			users[i].emit("publish line", username, msg);
 		}
+	}
 
 	else if (p_msg[1] !== ""){
 		msg = p_msg[0] + " | " + p_msg[1];
 		const username = this.get("username");
-			for(var i in users) {
-				users[i].emit("update line", username, msg);
-			}
+		for(var i in users) {
+			users[i].emit("update line", username, msg);
+		}
 
 		if (p_msg[0] === "name"){
 			let oldusername = this.get("username")
@@ -176,13 +176,13 @@ users[username] = this;
 		}
 	}
 
-		// this is broken, but also not high priority for me.
-		/*
-		if (p_msg[0] === "help"){
-			for(var i in users) {
-				users[i].emit("message", "system", "You're on your own bud.");
-			}
-		*/
+	// this is broken, but also not high priority for me.
+	/*
+	if (p_msg[0] === "help"){
+	for(var i in users) {
+	users[i].emit("message", "system", "You're on your own bud.");
+}
+*/
 })
 
 

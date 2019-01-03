@@ -1,122 +1,109 @@
 <html>
-	<head>
-		<title>voyochat</title>
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
-		<script type="text/javascript" src="/client.js"></script>
-		<style type="text/css">
-			body {
-        font: 14px Helvetica;
-        margin-right: auto;
-        margin-left:  auto;
-        background-color: #191919;
-        color: #ffffff;
-        max-width: 960px;
-        padding-right: 10px;
-        padding-left: 10px;
-        line-height: 1.6;
-        box-sizing: border-box
-			}
-			button, input {
-				padding: 5px 10px;
-			}
+<head>
+	<title>voyochat</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+	<script type="text/javascript" src="/client.js"></script>
+	<style type="text/css">
+	body {
+		font: 14px Helvetica;
+		margin-right: auto;
+		margin-left:  auto;
+		background-color: #191919;
+		color: #ffffff;
+		max-width: 960px;
+		padding-right: 10px;
+		padding-left: 10px;
+		line-height: 1.6;
+		box-sizing: border-box
+	}
+	button, input {
+		padding: 5px 10px;
+	}
 
 
-			li{
-	    	list-style-type: none;
-				display: inline-block;
-	    }
+	li{
+		list-style-type: none;
+		display: inline-block;
+	}
 
-			#messageList {
-				margin: 0 auto;
-				overflow: auto;
-				border: 1px #ccc solid;
-				padding: 8px;
-				height: 90%;
-				padding-right: 6px;
-			}
-			
-			.message {
-				margin: 0;
-				width: auto;
-			}
+	#messageList {
+		margin: 0 auto;
+		overflow: auto;
+		border: 1px #ccc solid;
+		padding: 8px;
+		height: 90%;
+		padding-right: 6px;
+	}
 
-			.message > .from {
-				font-weight: bold;
-				color: blue;
-			}
+	.message {
+		margin: 0;
+		width: auto;
+	}
 
-			.message > .from.me {
-				color: red;
-			}
+	.name{
+		font-weight: bold;
+		left: 0%;
+		margin: auto;
+		padding-right: 8px;
+	}
 
-			.message > .from.system {
-				color: purple;
-			}
+	.fadein{
+		animation-name: fadein;
+		animation-duration: 1.5s;
+	}
 
-			.name{
-	      font-weight: bold;
-	      left: 0%;
-				margin: auto;
-				padding-right: 8px;
-	    }
+	@keyframes fadein{
+		from{color: #a5a5a5;}
+		to{color: #ffffff;}
+	}
 
-			.fadein{
-      animation-name: fadein;
-      animation-duration: 1.5s;
-    }
+	.slidein{
+		color: #a5a5a5;
+		animation-name: slidein;
+		animation-duration: .3s;
+	}
 
-    @keyframes fadein{
-      from{color: #a5a5a5;}
-      to{color: #ffffff;}
-    }
+	@keyframes slidein{
+		from{
+			margin-top: -22px;
+			opacity:0;
+		}
+		to{
+			margin-top: 0px;
+			opacity:1;
+		}
+	}
 
-    .slidein{
-      color: #a5a5a5;
-      animation-name: slidein;
-      animation-duration: .3s;
-    }
+	.nobreak{
+		display: inline;
+	}
 
-    @keyframes slidein{
-      from{
-        margin-top: -22px;
-        opacity:0;
-        }
-      to{
-        margin-top: 0px;
-        opacity:1;
-        }
-    }
+	.blipout{
+		animation-name: blipout;
+		animation-duration: .3s;
+		opacity:0;
+	}
 
-    .nobreak{
-      display: inline;
-    }
+	@keyframes blipout{
+		from{
+			margin-top:0px;
+			opacity:1;
+		}
+		to{
+			margin-top:-22px;
+			opacity:0;
+		}
 
-    .blipout{
-      animation-name: blipout;
-      animation-duration: .3s;
-      opacity:0;
-    }
+	}
 
-    @keyframes blipout{
-      from{
-        margin-top:0px;
-        opacity:1;
-        }
-      to{
-        margin-top:-22px;
-        opacity:0;
-        }
-
-    }
-
-		</style>
-	</head>
-	<body>
-		<section id="messages">
-			<div id="messageList"></div>
-		</section>
-		<form id="newMessage">
-			<input type="text" id="message" autocomplete="off" placeholder="Enter to start typing."/>
-		</form>
-	</body>
+	</style>
+</head>
+<body>
+	<section id="messages">
+		<div id="messageList"></div>
+	</section>
+	<form id="newMessage">
+		<input type="text" id="message" autocomplete="off" placeholder="Enter to start typing."/>
+	</form>
+</body>
 </html>
