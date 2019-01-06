@@ -142,6 +142,7 @@ function runafterDOMload(){
 	});
 
 	socket.request("entry", $("#username").val() );
+	socket.emit("joined room", location.pathname);
 	var sendform = document.getElementById("message");
 
 	var line_open_status = 0;
@@ -152,7 +153,7 @@ function runafterDOMload(){
 			sendform.focus();
 			else if (document.activeElement == sendform){
 				if (sendform.value !== ""){
-					socket.emit('rollupdate', sendform.value);
+					socket.emit('rolling update', sendform.value);
 					socket.emit('publish line', sendform.value);
 				}
 
@@ -183,7 +184,7 @@ function runafterDOMload(){
 
 	function form_keyup(e){
 		if (document.activeElement === sendform)
-		socket.emit('rollupdate', sendform.value);
+		socket.emit('rolling update', sendform.value);
 	}
 	sendform.addEventListener('keyup', form_keyup);
 	sendform.addEventListener('focus', enter_focus);

@@ -92,6 +92,7 @@ function runafterDOMload(){
 	});
 
 	socket.request("entry", $("#username").val() );
+	socket.emit("joined room", location.pathname);
 
 	// Selects form when enter pressed.
 	var sendform = document.getElementById("message");
@@ -105,7 +106,7 @@ function runafterDOMload(){
 			else if (document.activeElement == sendform){
 				if (sendform.value !== ""){
 					//socket.emit('update line', sendform.value);
-					socket.emit('rollupdate', sendform.value);
+					socket.emit('rolling update', sendform.value);
 					socket.emit('publish line', sendform.value);
 					//socket.emit('message', sendform.value);
 				}
@@ -137,7 +138,7 @@ function runafterDOMload(){
 
 	function form_keyup(e){
 		if (document.activeElement === sendform)
-		socket.emit('rollupdate', sendform.value);
+		socket.emit('rolling update', sendform.value);
 	}
 
 	// Declaring all the event listeners.
