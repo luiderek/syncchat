@@ -1,4 +1,4 @@
-/* This chat server uses "ws" for Node.js WebSockets.
+/* This /chat server uses "ws" for Node.js WebSockets.
 "node-module-concat" is used to bundle the client-side code at run-time.
 */
 const http = require("http")
@@ -9,6 +9,12 @@ const http = require("http")
 
 const nameimport = require("./server/names.js");
 const names = new nameimport();
+
+var Koa = require('koa');
+var Router = require('koa-router');
+var app = new Koa();
+var router = new Router();
+
 
 const msg_processer = require("./server/processmessage.js");
 const msgeval = new msg_processer();
@@ -24,10 +30,6 @@ var users = {};
 function userLogout(username) {
 	if(users[username]) {
 		delete users[username];
-		// Notify all other users
-		for(var i in users) {
-			users[i].emit("message", "system", username + " has disconnected.");
-		}
 	}
 }
 
@@ -37,15 +39,15 @@ socketServer.on("disconnect", (socket) => {
 	userLogout(username);
 });
 
-// Setup event handlers on the WebSocketServerWrapper for the "chat" channel
-// Soon I'll have to replace "chat" with rooms themselves.
-socketServer.of("chat").on("login", function() {
+// Setup event handlers on the WebSocketServerWrapper for the "/chat" channel
+// Soon I'll have to replace "/chat" with rooms themselves.
+socketServer.on("login", function() {
 	username = names.gen_name();
 	while(username === "system" || (users[username] && users[username] !== this)){
 		username = names.gen_name();
 	}
 	this.set("username", username);
-	// Note that the "chat" channel is actually stored in `users[username]`
+	// Note that the "/chat" channel is actually stored in `users[username]`
 	users[username] = this;
 })
 
@@ -71,47 +73,6 @@ socketServer.of("chat").on("login", function() {
 
 		//if type = math: what if it calculates as it types? radical.
 		//if type = roll: what if it had a scrambler CSS while you typed it.
-	}
-})
-
-.on("message", function(msg) {
-	// short for processed message.
-	let p_msg = msgeval.process(msg);
-	// here is a function that takes in a message and spits back
-	// a cleaned up message or a "hmm. its math / dice / a name change"
-	// msg[0] is type, msg[1] is trimmed output.
-
-	if (p_msg[0] == "none" && p_msg[1] !== ""){
-		const username = this.get("username");
-		for(var i in users) {
-			users[i].emit("message", username, msg);
-		}
-	}
-
-	else if (p_msg[1] !== ""){
-		msg = + p_msg[0] + " | " + p_msg[1];
-		const username = this.get("username");
-		for(var i in users) {
-			users[i].emit("message", username, msg);
-		}
-
-		//if type = roll: what if it had a scrambler CSS while you typed it.
-
-		if (p_msg[0] === "name"){
-			let oldusername = this.get("username")
-			this.set("username", p_msg[1])
-
-			for(var i in users) {
-				users[i].emit("message", "system", oldusername + " has changed their name to "+ p_msg[1] +".");
-			}
-		}
-
-		// this is broken, but also not high priority for me.
-		if (p_msg[0].substring(0,4) === "help"){
-			for(var i in users) {
-				users[i].emit("server message", "You're on your own bud.");
-			}
-		}
 	}
 })
 
@@ -182,14 +143,6 @@ socketServer.of("chat").on("login", function() {
 			}
 		}
 	}
-
-	// this is broken, but also not high priority for me.
-	/*
-	if (p_msg[0] === "help"){
-	for(var i in users) {
-	users[i].emit("message", "system", "You're on your own bud.");
-}
-*/
 })
 
 

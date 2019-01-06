@@ -18,41 +18,35 @@ socket.on("error", () => {
 	socket.disconnect();
 });
 
-socket.of("chat").on("message", addMessage);
 
-socket.of("chat").on('open line', function(name, color) {
+
+socket.on('open line', function(name, color) {
 	if (document.getElementById("id:"+name) === null){
-
 		placement = document.getElementById("messageList");
-
 		let newDiv = document.createElement("div"),
 		newName = document.createElement("li"),
 		newMess = document.createElement("li");
-
 		newDiv.id = 'id:'+name;
 		newName.classList.add("name");
 		newName.style.color = color;
 		newDiv.classList.add("slidein");
-
 		newName.textContent = name + ": ";
 		newMess.textContent = "";
-
 		newDiv.appendChild(newName);
 		newDiv.appendChild(newMess);
-
 		placement.appendChild(newDiv);
 		scrollToBottom();
 	}
 });
 
-socket.of("chat").on('update line', function(msg = "", name) {
+socket.on('update line', function(msg = "", name) {
 	namedelement = document.getElementById('id:'+name).children[1];
 	if (namedelement !== null) {
 		namedelement.innerHTML = msg;
 	}
 });
 
-socket.of("chat").on('publish line', function(name) {
+socket.on('publish line', function(name) {
 	var div = document.getElementById('id:' + name);
 	div.id = ".";
 	div.classList.add("fadein");
@@ -61,7 +55,7 @@ socket.of("chat").on('publish line', function(name) {
 	if (document.hidden){changeTitle();}
 });
 
-socket.of("chat").on('close line', function(name) {
+socket.on('close line', function(name) {
 	closedMess = document.getElementById('id:'+name);
 	closedMess.classList.remove("slidein");
 	closedMess.classList.add("blipout");
@@ -76,7 +70,7 @@ socket.of("chat").on('close line', function(name) {
 	closetimeout = setTimeout(delaykill, 305);
 });
 
-socket.of("chat").on('server message', function(msg, color = "##8b8bff") {
+socket.on('server message', function(msg, color = "##8b8bff") {
 	placement = document.getElementById("messageList");
 	let newMess = document.createElement("li");
 	newMess.style.color = color;
@@ -86,29 +80,15 @@ socket.of("chat").on('server message', function(msg, color = "##8b8bff") {
 	scrollToBottom();
 });
 
-function addMessage(fromStr, msg) {
-	// Add a message to the DOM
-	let p = $('<p class="message">');
-	let from = $('<span class="from">');
-	if(fromStr === "system")
-	from.addClass("system");
-	else if(fromStr === $("#username").val() )
-	from.addClass("me");
-	from.append(fromStr + ":");
-	p.append(from);
-	p.append(" " + msg);
-	let list = $("#messageList").append(p)[0];
-	// Now scroll down automatically
-	if(list.scrollHeight - list.scrollTop - list.clientHeight <= 30)
-	list.scrollTop = list.scrollHeight;
-}
-
+// socket.on("message", addMessage);
+//function addMessage(fromStr, msg) {}
+// lets break stuff!
 
 function login() {
 	$("#loginButton").hide();
 	$("#username").attr("disabled", "disabled");
 	// Send request to login
-	socket.of("chat").request("login", $("#username").val() )
+	socket.request("login", $("#username").val() )
 	.then(() => {
 		// Login succeeded
 		$("#logoutButton, #newMessage").show();
@@ -126,9 +106,9 @@ function logout() {
 	$("#loginButton").show();
 	$("#username").removeAttr("disabled");
 	// Send request to logout
-	socket.of("chat").request("logout")
+	socket.request("logout")
 	.then(() => {
-		socket.of("chat").emit("close line");
+		socket.emit("close line");
 	})
 	.catch((err) => {
 		console.error(err);
@@ -154,7 +134,7 @@ function changeTitle(){
 $(() => {
 
 	$("#newMessage").on("submit", function sendMessage(e) {
-		// socket.of("chat").emit("message", $("#message").val() );
+		// socket.emit("message", $("#message").val() );
 		e.preventDefault();
 	});
 
@@ -173,10 +153,10 @@ $(() => {
 			sendform.focus();
 			else if (document.activeElement == sendform){
 				if (sendform.value !== ""){
-					//socket.of("chat").emit('update line', sendform.value);
-					socket.of("chat").emit('rollupdate', sendform.value);
-					socket.of("chat").emit('publish line', sendform.value);
-					//socket.of("chat").emit('message', sendform.value);
+					//socket.emit('update line', sendform.value);
+					socket.emit('rollupdate', sendform.value);
+					socket.emit('publish line', sendform.value);
+					//socket.emit('message', sendform.value);
 				}
 
 				sendform.value = "";
@@ -186,14 +166,14 @@ $(() => {
 
 		function gain_focus(){
 			if (line_open_status === 0)
-			socket.of("chat").emit('open line');
+			socket.emit('open line');
 			line_open_status = 1;
 		}
 
 
 		function lose_focus(){
 			if (sendform.value === "" && line_open_status === 1)
-			socket.of("chat").emit('close line');
+			socket.emit('close line');
 			line_open_status = 0;
 		}
 
@@ -207,7 +187,7 @@ $(() => {
 
 	function form_keyup(e){
 		if (document.activeElement === sendform)
-		socket.of("chat").emit('rollupdate', sendform.value);
+		socket.emit('rollupdate', sendform.value);
 	}
 
 	// Declaring all the event listeners.

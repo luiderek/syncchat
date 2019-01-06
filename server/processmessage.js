@@ -12,8 +12,6 @@ function evaluatorModule(msg) {
   const cleanHTML = require('sanitize-html');
   const linkifyHtml = require('linkifyjs/html');
 
-
-
   // function that returns the [type,trimed] of message.
   this.process = function(msg){
     switch (msg.substring(0,1)){
