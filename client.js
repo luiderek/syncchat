@@ -4,7 +4,6 @@ window.socket = new WebSocketWrapper(
 );
 
 socket.on("disconnect", function() {
-	logout();
 });
 
 socket.on("error", () => {
@@ -83,17 +82,6 @@ function login() {
 
 	});
 }
-
-function logout() {
-	socket.request("logout")
-	.then(() => {
-		socket.emit("close line");
-	})
-	.catch((err) => {
-		console.error(err);
-	});
-}
-
 
 function scrollToBottom(){
 	let isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 30;

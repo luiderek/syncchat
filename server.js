@@ -4,6 +4,7 @@ const http = require("http")
 	, WebSocketWrapper = require("ws-server-wrapper")
 	, moduleConcat = require("module-concat")
 	, koa = require("koa")
+	, logger = require('koa-morgan')
 	, router = require("koa-router")();
 
 // Create new HTTP server using koa and a new WebSocketServer
@@ -76,12 +77,13 @@ socketServer.on("connection", function(socket) {
 		}
 	})
 
+	/*
 	.on("logout", function() {
 		const username = this.get("username");
 		userRemove(username);
 	})
-
-	// and so it begins
+	*/
+	
 	.on("open line", function(){
 		const sender = this.get("username");
 		const color = names.gen_color(this.get("username"));
@@ -97,7 +99,6 @@ socketServer.on("connection", function(socket) {
 	})
 
 	.on("update line", function(msg){
-		// If the first character is '=', try to dynamically do math?
 		for(var i in users) {
 			users[i].emit("update line", msg, this.get("username"));
 		}
@@ -130,6 +131,7 @@ socketServer.on("connection", function(socket) {
 					users[i].emit("server message", oldusername + " has changed their name to " + p_msg[1] + ".");
 				}
 			}
+
 			/*
 			else if (p_msg[0] === "roll"){
 				const criticalfail = diceTower.roll(msg.substring(1,msg.length)).result
@@ -139,6 +141,7 @@ socketServer.on("connection", function(socket) {
 				}
 			}
 			*/
+
 			else if(true){
 				for(var i in users) {
 					users[i].emit("publish line", this.get("username"));
@@ -151,6 +154,8 @@ socketServer.on("connection", function(socket) {
 
 // Setup koa router
 app.use(router.routes());
+// Setup koa logger
+app.use(logger('tiny'));
 // Serve index.html and client.js
 
 router.get("/r/(.*)", (ctx, next) => {
@@ -163,16 +168,8 @@ router.get("/client.js", (ctx, next) => {
 	ctx.body = fs.createReadStream(__dirname + "/client_build.js");
 });
 
-// Build client.js using "node-module-concat"
-/* moduleConcat(__dirname + "/client.js", __dirname + "/client_build.js", function(err, stats) {
-	if(err) {
-		throw err;
-	}
-
-	const files = stats.files;
-	console.log(`${files.length} files combined into build:\n`, files);
-}); */
-
+// Build client.js using "node-module-concat",
+// Run server on :3000 when done.
 moduleConcat(__dirname + "/client.js", __dirname + "/client_build.js", function(err, stats) {
 	if(err) {
 		throw err;
