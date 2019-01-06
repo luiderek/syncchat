@@ -25,7 +25,6 @@ function evaluatorModule(msg) {
             type = "roll";
             break;
 
-          // User, nick, name, all call the name function.
           case msg.substring(1,8) === "rename ":
             msg = msg.substring(2,msg.length);
           case msg.substring(1,6) === "nick ":
@@ -38,7 +37,19 @@ function evaluatorModule(msg) {
             msg = msg.substring(3, msg.length);
           case msg.substring(1,2) === "?":
             msg = msg.substring(2, msg.length);
+            // placeholder help message.
             type = "help";
+            msg = "*bold*, \\italics\\, _under_, ~strike~, preface with '=' for calculator";
+            break;
+
+          case msg.substring(1,3) === "c ":
+          case msg.substring(1,9) === "convert ":
+            type = "convert";
+            break;
+
+          case msg.substring(1,3) === "s ":
+          case msg.substring(1,7) === "stats ":
+            type = "stats";
             break;
 
           default:
@@ -62,7 +73,7 @@ function evaluatorModule(msg) {
 
         msg = down(msg, {
           bold: {delimiter: '*', tag: 'strong'},
-          italic: {delimiter: '/', tag: 'em'},
+          italic: {delimiter: '\\', tag: 'em'},
           underline: {delimiter: '_', tag: 'u'},
           strike: {delimiter: '~', tag: 'del'},
         })

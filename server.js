@@ -4,7 +4,6 @@ const http = require("http")
 	, WebSocketWrapper = require("ws-server-wrapper")
 	, moduleConcat = require("module-concat")
 	, koa = require("koa")
-	, logger = require('koa-morgan')
 	, router = require("koa-router")();
 
 // Create new HTTP server using koa and a new WebSocketServer
@@ -18,7 +17,7 @@ const nameimport = require("./server/names.js");
 const names = new nameimport();
 
 const msg_processer = require("./server/processmessage.js");
-const msgeval = new msg_processer();
+const msg_eval = new msg_processer();
 
 // Save all logged in `users`; keys are usernames
 var sockets = [];
@@ -42,9 +41,11 @@ socketServer.on("connection", function(socket) {
 		this.set("username", username);
 		// Note that the "/chat" channel is actually stored in `users[username]`
 		users[username] = this;
+		console.log(users);
 	})
 
 	.on("disconnect", function() {
+		sockets.pop(socket);
 		const username = socket.get("username");
 		userRemove(username);
 		for(var i in users) {
@@ -53,7 +54,7 @@ socketServer.on("connection", function(socket) {
 	})
 
 	.on("rollupdate", function(msg){
-		let p_msg = msgeval.process(msg);
+		let p_msg = msg_eval.process(msg);
 		// msg[0] is type, msg[1] is trimmed output.
 
 		if (p_msg[0] == "none"){
@@ -71,9 +72,6 @@ socketServer.on("connection", function(socket) {
 			for(var i in users) {
 				users[i].emit("update line", newmsg, sender);
 			}
-
-			//if type = math: what if it calculates as it types? radical.
-			//if type = roll: what if it had a scrambler CSS while you typed it.
 		}
 	})
 
@@ -83,7 +81,8 @@ socketServer.on("connection", function(socket) {
 		userRemove(username);
 	})
 	*/
-	
+
+	// Opens a new line.
 	.on("open line", function(){
 		const sender = this.get("username");
 		const color = names.gen_color(this.get("username"));
@@ -92,21 +91,24 @@ socketServer.on("connection", function(socket) {
 		}
 	})
 
+	// Closes a line. No line left behind.
 	.on("close line", function(){
 		for(var i in users) {
 			users[i].emit("close line", this.get("username"));
 		}
 	})
 
+	// Updates the content of a currently opened line.
 	.on("update line", function(msg){
 		for(var i in users) {
 			users[i].emit("update line", msg, this.get("username"));
 		}
 	})
 
+	// Called to turn an open line into a published line.
 	.on("publish line", function(msg){
 
-		let p_msg = msgeval.process(msg);
+		let p_msg = msg_eval.process(msg);
 
 		if (p_msg[0] == "none" && p_msg[1] !== ""){
 			const username = this.get("username");
@@ -132,16 +134,6 @@ socketServer.on("connection", function(socket) {
 				}
 			}
 
-			/*
-			else if (p_msg[0] === "roll"){
-				const criticalfail = diceTower.roll(msg.substring(1,msg.length)).result
-				for(var i in users) {
-					users[i].emit("publish line", this.get("username"));
-					users[i].emit("server message", criticalfail);
-				}
-			}
-			*/
-
 			else if(true){
 				for(var i in users) {
 					users[i].emit("publish line", this.get("username"));
@@ -154,23 +146,21 @@ socketServer.on("connection", function(socket) {
 
 // Setup koa router
 app.use(router.routes());
-// Setup koa logger
-app.use(logger('tiny'));
 // Serve index.html and client.js
 
 router.get("/r/(.*)", (ctx, next) => {
 	ctx.type = "text/html";
-	ctx.body = fs.createReadStream(__dirname + "/index.html");
+	ctx.body = fs.createReadStream(__dirname + "/public/index.html");
 });
 
 router.get("/client.js", (ctx, next) => {
 	ctx.type = "text/javascript";
-	ctx.body = fs.createReadStream(__dirname + "/client_build.js");
+	ctx.body = fs.createReadStream(__dirname + "/public/client_build.js");
 });
 
 // Build client.js using "node-module-concat",
 // Run server on :3000 when done.
-moduleConcat(__dirname + "/client.js", __dirname + "/client_build.js", function(err, stats) {
+moduleConcat(__dirname + "/public/client.js", __dirname + "/public/client_build.js", function(err, stats) {
 	if(err) {
 		throw err;
 	}

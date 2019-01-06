@@ -49,7 +49,7 @@ function __getDirname(path) {
 	return require("path").resolve(__dirname + "/" + path + "/../");
 }
 /********** End of header **********/
-/********** Start module 0: /home/derek/projects/chatroom/client.js **********/
+/********** Start module 0: /home/derek/projects/chatroom/public/client.js **********/
 __modules[0] = function(module, exports) {
 const WebSocketWrapper = __require(1,0);
 window.socket = new WebSocketWrapper(
@@ -94,7 +94,6 @@ socket.on('publish line', function(name) {
 	div.id = ".";
 	div.classList.add("fadein");
 	div.classList.remove("slidein");
-	if (document.hidden){changeTitle();}
 });
 
 socket.on('close line', function(name) {
@@ -122,15 +121,6 @@ socket.on('server message', function(msg, color = "##8b8bff") {
 	scrollToBottom();
 });
 
-function login() {
-	socket.request("entry", $("#username").val() )
-	.then(() => {
-	})
-	.catch((err) => {
-
-	});
-}
-
 function scrollToBottom(){
 	let isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 30;
 	if (isScrolledToBottom){
@@ -139,19 +129,19 @@ function scrollToBottom(){
 	}
 }
 
-function changeTitle(){
-	update_count++;
-	var newTitle = '(' + update_count +') ' + title;
-	document.title = newTitle;
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", runafterDOMload);
+} else {  // `DOMContentLoaded` already fired
+    runafterDOMload();
 }
 
-$(() => {
-
+function runafterDOMload(){
 	$("#newMessage").on("submit", function sendMessage(e) {
 		e.preventDefault();
 	});
 
-	login();
+	socket.request("entry", $("#username").val() );
 	var sendform = document.getElementById("message");
 
 	var line_open_status = 0;
@@ -177,7 +167,6 @@ $(() => {
 			line_open_status = 1;
 		}
 
-
 		function lose_focus(){
 			if (sendform.value === "" && line_open_status === 1)
 			socket.emit('close line');
@@ -201,11 +190,11 @@ $(() => {
 	sendform.addEventListener('blur', enter_focus);
 	document.body.addEventListener('keyup', enter_focus, 1);
 
-});
+};
 
 return module.exports;
 }
-/********** End of module 0: /home/derek/projects/chatroom/client.js **********/
+/********** End of module 0: /home/derek/projects/chatroom/public/client.js **********/
 /********** Start module 1: /home/derek/projects/chatroom/node_modules/ws-wrapper/lib/wrapper.js **********/
 __modules[1] = function(module, exports) {
 "use strict";

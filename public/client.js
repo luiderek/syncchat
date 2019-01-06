@@ -42,7 +42,7 @@ socket.on('publish line', function(name) {
 	div.classList.add("fadein");
 	div.classList.remove("slidein");
 	// If tabbed out, change the title.
-	if (document.hidden){changeTitle();}
+	// if (document.hidden){changeTitle();}
 });
 
 socket.on('close line', function(name) {
@@ -70,19 +70,6 @@ socket.on('server message', function(msg, color = "##8b8bff") {
 	scrollToBottom();
 });
 
-// socket.on("message", addMessage);
-//function addMessage(fromStr, msg) {}
-// lets break stuff!
-
-function login() {
-	socket.request("entry", $("#username").val() )
-	.then(() => {
-	})
-	.catch((err) => {
-
-	});
-}
-
 function scrollToBottom(){
 	let isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 30;
 	if (isScrolledToBottom){
@@ -91,23 +78,20 @@ function scrollToBottom(){
 	}
 }
 
-function changeTitle(){
-	update_count++;
-	var newTitle = '(' + update_count +') ' + title;
-	document.title = newTitle;
-	// Maybe get it to flash the favicon as well? 1
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", runafterDOMload);
+} else {  // `DOMContentLoaded` already fired
+    runafterDOMload();
 }
 
-$(() => {
-
+function runafterDOMload(){
 	$("#newMessage").on("submit", function sendMessage(e) {
 		// socket.emit("message", $("#message").val() );
 		e.preventDefault();
 	});
 
-	login();
-
-	//addMessage("system", "Welcome!");
+	socket.request("entry", $("#username").val() );
 
 	// Selects form when enter pressed.
 	var sendform = document.getElementById("message");
@@ -137,7 +121,6 @@ $(() => {
 			line_open_status = 1;
 		}
 
-
 		function lose_focus(){
 			if (sendform.value === "" && line_open_status === 1)
 			socket.emit('close line');
@@ -163,4 +146,4 @@ $(() => {
 	sendform.addEventListener('blur', enter_focus);
 	document.body.addEventListener('keyup', enter_focus, 1);
 
-});
+};
