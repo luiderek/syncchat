@@ -63,72 +63,6 @@ socket.on("error", () => {
 	socket.disconnect();
 });
 
-socket.on('open line', function(name, color) {
-	if (document.getElementById("id:"+name) === null){
-		placement = document.getElementById("messageList");
-		let newDiv = document.createElement("div"),
-		newName = document.createElement("li"),
-		newMess = document.createElement("li");
-		newDiv.id = 'id:'+name;
-		newName.classList.add("name");
-		newName.style.color = color;
-		newDiv.classList.add("slidein");
-		newName.textContent = name + ": ";
-		newMess.textContent = "";
-		newDiv.appendChild(newName);
-		newDiv.appendChild(newMess);
-		placement.appendChild(newDiv);
-		scrollToBottom();
-	}
-});
-
-socket.on('update line', function(msg = "", name) {
-	namedelement = document.getElementById('id:'+name).children[1];
-	if (namedelement !== null) {
-		namedelement.innerHTML = msg;
-	}
-});
-
-socket.on('publish line', function(name) {
-	var div = document.getElementById('id:' + name);
-	div.id = ".";
-	div.classList.add("fadein");
-	div.classList.remove("slidein");
-});
-
-socket.on('close line', function(name) {
-	closedMess = document.getElementById('id:'+name);
-	closedMess.classList.remove("slidein");
-	closedMess.classList.add("blipout");
-
-	function delaykill(){
-		closedMess = document.getElementById('id:'+name)
-		if (closedMess !== null){
-			closedMess.remove();
-			closedMess.id = ".";
-		}
-	}
-	closetimeout = setTimeout(delaykill, 305);
-});
-
-socket.on('server message', function(msg, color = "##8b8bff") {
-	placement = document.getElementById("messageList");
-	let newMess = document.createElement("li");
-	newMess.style.color = color;
-	newContent = document.createTextNode(msg);
-	newMess.appendChild(newContent);
-	placement.appendChild(newMess);
-	scrollToBottom();
-});
-
-function scrollToBottom(){
-	let isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 30;
-	if (isScrolledToBottom){
-		var scroll_interval = setInterval(function(){messageDiv.scrollTop = messageDiv.scrollHeight;}, 25);
-		var scroll_timeout = setTimeout(function(){clearInterval(scroll_interval)}, 300);
-	}
-}
-
 
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", runafterDOMload);
@@ -143,6 +77,64 @@ function runafterDOMload(){
 
 	socket.request("entry", $("#username").val() );
 	socket.emit("joined room", location.pathname);
+
+	socket.on('open line', function(name, color) {
+		if (document.getElementById("id:"+name) === null){
+			placement = document.getElementById("messageList");
+			let newDiv = document.createElement("div"),
+			newName = document.createElement("li"),
+			newMess = document.createElement("li");
+			newDiv.id = 'id:'+name;
+			newName.classList.add("name");
+			newName.style.color = color;
+			newDiv.classList.add("slidein");
+			newName.textContent = name + ": ";
+			newMess.textContent = "";
+			newDiv.appendChild(newName);
+			newDiv.appendChild(newMess);
+			placement.appendChild(newDiv);
+			scrollToBottom();
+		}
+	});
+
+	socket.on('update line', function(msg = "", name) {
+		namedelement = document.getElementById('id:'+name).children[1];
+		if (namedelement !== null) {
+			namedelement.innerHTML = msg;
+		}
+	});
+
+	socket.on('publish line', function(name) {
+		var div = document.getElementById('id:' + name);
+		div.id = ".";
+		div.classList.add("fadein");
+		div.classList.remove("slidein");
+	});
+
+	socket.on('close line', function(name) {
+		closedMess = document.getElementById('id:'+name);
+		closedMess.classList.remove("slidein");
+		closedMess.classList.add("blipout");
+
+		function delaykill(){
+			closedMess = document.getElementById('id:'+name)
+			if (closedMess !== null){
+				closedMess.remove();
+				closedMess.id = ".";
+			}
+		}
+		closetimeout = setTimeout(delaykill, 305);
+	});
+
+	socket.on('server message', function(msg, color = "##8b8bff") {
+		placement = document.getElementById("messageList");
+		let newMess = document.createElement("p");
+		newMess.style.color = color;
+		newContent = document.createTextNode(msg);
+		newMess.appendChild(newContent);
+		placement.appendChild(newMess);
+		scrollToBottom();
+	});
 	var sendform = document.getElementById("message");
 
 	var line_open_status = 0;
@@ -185,6 +177,17 @@ function runafterDOMload(){
 	function form_keyup(e){
 		if (document.activeElement === sendform)
 		socket.emit('rolling update', sendform.value);
+	}
+
+
+	var messageDiv = document.getElementById("messageList");
+
+	function scrollToBottom(){
+		let isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 40;
+		if (isScrolledToBottom){
+			var scroll_interval = setInterval(function(){messageDiv.scrollTop = messageDiv.scrollHeight;}, 20);
+			var scroll_timeout = setTimeout(function(){clearInterval(scroll_interval)}, 300);
+		}
 	}
 	sendform.addEventListener('keyup', form_keyup);
 	sendform.addEventListener('focus', enter_focus);

@@ -40,6 +40,7 @@ function usersInRoom(user, room = ""){
 		if (users[i]._data.room === match)
 			output[i] = users[i];
 	}
+
 	// Assigns that shorter list to the room name.
 	hotel[match] = output;
 }
@@ -161,6 +162,14 @@ socketServer.on("connection", function(socket) {
 					users[i].emit("server message", oldusername + " has changed their name to " + p_msg[1] + ".");
 				}
 			}
+			if (p_msg[0] === "stats"){
+				for(var i in sameroom) {
+					var a;
+					for (a = 0; a < 50; a++) {
+						users[i].emit("server message", "spam");
+					}
+				}
+			}
 			else if(true){
 				for(var i in sameroom) {
 					users[i].emit("publish line", username);
@@ -173,8 +182,8 @@ socketServer.on("connection", function(socket) {
 
 // Setup koa router
 app.use(router.routes());
-// Serve index.html and client.js
 
+// Serve index.html and client.js
 router.get("/r/(.*)", (ctx, next) => {
 	ctx.type = "text/html";
 	ctx.body = fs.createReadStream(__dirname + "/public/index.html");
