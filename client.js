@@ -3,22 +3,13 @@ window.socket = new WebSocketWrapper(
 	new WebSocket("ws://" + location.host)
 );
 
-socket.on("disconnect", function(wasOpen) {
-	// Check `wasOpen` flag, so we don't try to logout on each disconnection
-	if(wasOpen)
+socket.on("disconnect", function() {
 	logout();
-	// Auto-reconnect
-	console.log("Reconnecting in 5 secs..");
-	setTimeout(() => {
-		socket.bind(new WebSocket("ws://" + location.host) );
-	}, 5000);
 });
 
 socket.on("error", () => {
 	socket.disconnect();
 });
-
-
 
 socket.on('open line', function(name, color) {
 	if (document.getElementById("id:"+name) === null){
@@ -85,27 +76,15 @@ socket.on('server message', function(msg, color = "##8b8bff") {
 // lets break stuff!
 
 function login() {
-	$("#loginButton").hide();
-	$("#username").attr("disabled", "disabled");
-	// Send request to login
-	socket.request("login", $("#username").val() )
+	socket.request("entry", $("#username").val() )
 	.then(() => {
-		// Login succeeded
-		$("#logoutButton, #newMessage").show();
-		$("#message").val("").focus();
 	})
 	.catch((err) => {
-		// Login failed; just logout...
-		alert(err);
-		logout();
+
 	});
 }
 
 function logout() {
-	$("#logoutButton, #newMessage").hide();
-	$("#loginButton").show();
-	$("#username").removeAttr("disabled");
-	// Send request to logout
 	socket.request("logout")
 	.then(() => {
 		socket.emit("close line");
@@ -192,10 +171,8 @@ $(() => {
 
 	// Declaring all the event listeners.
 	sendform.addEventListener('keyup', form_keyup);
-
 	sendform.addEventListener('focus', enter_focus);
 	sendform.addEventListener('blur', enter_focus);
 	document.body.addEventListener('keyup', enter_focus, 1);
-
 
 });
