@@ -198,6 +198,11 @@ router.get("/client.js", (ctx, next) => {
 	ctx.body = fs.createReadStream(__dirname + "/public/client_build.js");
 });
 
+router.get("/", (ctx, next) => {
+	ctx.type = "text/html";
+	ctx.body = fs.createReadStream(__dirname + "/public/redirect.html");
+});
+
 // Build client.js using "node-module-concat",
 // Run server on :3000 when done.
 moduleConcat(__dirname + "/public/client.js", __dirname + "/public/client_build.js", function(err, stats) {
