@@ -97,10 +97,8 @@ function runafterDOMload(){
 			sendform.focus();
 			else if (document.activeElement == sendform){
 				if (sendform.value !== ""){
-					//socket.emit('update line', sendform.value);
 					socket.emit('rolling update', sendform.value);
 					socket.emit('publish line', sendform.value);
-					//socket.emit('message', sendform.value);
 				}
 
 				sendform.value = "";
@@ -134,7 +132,7 @@ function runafterDOMload(){
 	}
 
 
-	var messageDiv = document.getElementById("messages");
+	var messageDiv = document.getElementById("messageList");
 
 	function scrollToBottom(){
 		let isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 40;

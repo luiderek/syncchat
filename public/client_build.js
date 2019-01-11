@@ -180,7 +180,7 @@ function runafterDOMload(){
 	}
 
 
-	var messageDiv = document.getElementById("messages");
+	var messageDiv = document.getElementById("messageList");
 
 	function scrollToBottom(){
 		let isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 40;
