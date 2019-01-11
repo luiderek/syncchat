@@ -12,6 +12,27 @@ function evaluatorModule(msg) {
   const cleanHTML = require('sanitize-html');
   const linkifyHtml = require('linkifyjs/html');
 
+  this.format = function(msg){
+    msg = down(msg, {
+      bold: {delimiter: '*', tag: 'strong'},
+      italic: {delimiter: '\\', tag: 'em'},
+      underline: {delimiter: '_', tag: 'u'},
+      strike: {delimiter: '~', tag: 'del'},
+    })
+
+    msg = linkifyHtml(msg, {
+      defaultProtocol: 'https'
+    })
+
+    msg = cleanHTML(msg, {
+      allowedTags: [ 'em', 'del', 'strong', 'a', 'u'],
+      allowedAttributes: {
+        'a': [ 'href' ]
+    }})
+
+    return msg;
+  }
+
   // function that returns the [type,trimed] of message.
   this.process = function(msg){
     switch (msg.substring(0,1)){

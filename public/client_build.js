@@ -111,11 +111,15 @@ function runafterDOMload(){
 		div.classList.remove("slidein");
 	});
 
-	socket.on('close line', function(name) {
+	socket.on('close line', function(name, fade = 0) {
 		closedMess = document.getElementById('id:'+name);
 		closedMess.classList.remove("slidein");
-		closedMess.classList.add("blipout");
-
+		if (fade = 0){
+			closedMess.classList.add("blipout");
+		}
+		else {
+			closedMess.classList.add("fade");
+		}
 		function delaykill(){
 			closedMess = document.getElementById('id:'+name)
 			if (closedMess !== null){
@@ -125,14 +129,15 @@ function runafterDOMload(){
 		}
 		closetimeout = setTimeout(delaykill, 305);
 	});
-
-	socket.on('server message', function(msg, color = "##8b8bff") {
+	socket.on('server message', function(msg, color = "#9999ff") {
 		placement = document.getElementById("messageList");
-		let newMess = document.createElement("p");
+		let newDiv = document.createElement("div"),
+				newMess = document.createElement("li");
+		newDiv.classList.add("slideinnocol");
 		newMess.style.color = color;
-		newContent = document.createTextNode(msg);
-		newMess.appendChild(newContent);
-		placement.appendChild(newMess);
+		newMess.innerHTML = msg;
+		newDiv.appendChild(newMess);
+		placement.appendChild(newDiv);
 		scrollToBottom();
 	});
 	var sendform = document.getElementById("message");
@@ -145,10 +150,8 @@ function runafterDOMload(){
 			sendform.focus();
 			else if (document.activeElement == sendform){
 				if (sendform.value !== ""){
-					socket.emit('rolling update', sendform.value);
 					socket.emit('publish line', sendform.value);
 				}
-
 				sendform.value = "";
 				sendform.blur();
 			}

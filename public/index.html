@@ -85,6 +85,7 @@
 		to{color: #ffffff;}
 	}
 
+
 	.slidein{
 		color: #a5a5a5;
 		animation-name: slidein;
@@ -99,6 +100,22 @@
 		to{
 			margin-top: 0px;
 			opacity:1;
+		}
+	}
+
+	.slideinnocol{
+		animation-name: slideinnocol;
+		animation-duration: .3s;
+	}
+
+	@keyframes slideinnocol{
+		from{
+			margin-top: -22px;
+			opacity: 0;
+		}
+		to{
+			margin-top: 0px;
+			opacity: 1;
 		}
 	}
 
@@ -128,6 +145,22 @@
 	.nobreak{
 		display: inline;
 	}
+
+	.fade{
+		animation-name: fade;
+		animation-duration: 0.3s;
+		opacity: 0
+	}
+
+	@keyframes fade{
+		from{
+			margin-top:0px;
+		}
+		to{
+			margin-top:-22px;
+		}
+	}
+
 
 	.blipout{
 		animation-name: blipout;

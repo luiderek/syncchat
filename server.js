@@ -123,7 +123,8 @@ socketServer.on("connection", function(socket) {
 	// Closes a line. No line left behind.
 	.on("close line", function(){
 		const sameroom = hotel[this.get("room")];
-		for(var i in sameroom) {			users[i].emit("close line", this.get("username"));
+		for(var i in sameroom) {
+			users[i].emit("close line", this.get("username"));
 		}
 	})
 
@@ -144,7 +145,7 @@ socketServer.on("connection", function(socket) {
 
 		if (p_msg[0] == "none" && p_msg[1] !== ""){
 			for(var i in sameroom) {
-				users[i].emit("update line", username, msg);
+				users[i].emit("update line", msg, username);
 				users[i].emit("publish line", username, msg);
 			}
 		}
@@ -155,22 +156,25 @@ socketServer.on("connection", function(socket) {
 				users[i].emit("update line", username, msg);
 			}
 
+			// if I could figure out how to multicolor lines, mmmmm. hot.
 			if (p_msg[0] === "name"){
-				let oldusername = this.get("username")
-				this.set("username", p_msg[1])
+				out = "\\"+username + "\\ has changed names to: \\" + p_msg[1] +"\\";
+				out = msg_eval.format(out);
 				for(var i in sameroom) {
-					users[i].emit("server message", oldusername + " has changed their name to " + p_msg[1] + ".");
+					users[i].emit("close line", this.get("username"), fade = 1);
+					users[i].emit("server message", out);
 				}
+				this.set("username", p_msg[1]);
 			}
-			if (p_msg[0] === "stats"){
+			else if (p_msg[0] === "stats"){
 				for(var i in sameroom) {
 					var a;
-					for (a = 0; a < 50; a++) {
+					for (a = 0; a < 30; a++) {
 						users[i].emit("server message", "spam");
 					}
 				}
 			}
-			else if(true){
+			if (p_msg[0] !== "name"){
 				for(var i in sameroom) {
 					users[i].emit("publish line", username);
 				}
