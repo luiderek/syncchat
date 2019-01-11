@@ -145,8 +145,8 @@ socketServer.on("connection", function(socket) {
 
 		if (p_msg[0] == "none" && p_msg[1] !== ""){
 			for(var i in sameroom) {
-				users[i].emit("update line", msg, username);
-				users[i].emit("publish line", username, msg);
+				users[i].emit("update line", p_msg[1], username);
+				users[i].emit("publish line", username, p_msg[1]);
 			}
 		}
 
@@ -158,7 +158,7 @@ socketServer.on("connection", function(socket) {
 
 			// if I could figure out how to multicolor lines, mmmmm. hot.
 			if (p_msg[0] === "name"){
-				out = "\\"+username + "\\ has changed names to: \\" + p_msg[1] +"\\";
+				out = "~"+username + "~ is now *" + p_msg[1] +"*";
 				out = msg_eval.format(out);
 				for(var i in sameroom) {
 					users[i].emit("close line", this.get("username"), fade = 1);

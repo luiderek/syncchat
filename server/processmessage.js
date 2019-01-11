@@ -19,17 +19,11 @@ function evaluatorModule(msg) {
       underline: {delimiter: '_', tag: 'u'},
       strike: {delimiter: '~', tag: 'del'},
     })
-
-    msg = linkifyHtml(msg, {
-      defaultProtocol: 'https'
-    })
-
     msg = cleanHTML(msg, {
       allowedTags: [ 'em', 'del', 'strong', 'a', 'u'],
       allowedAttributes: {
         'a': [ 'href' ]
     }})
-
     return msg;
   }
 
