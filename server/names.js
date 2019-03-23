@@ -17,9 +17,9 @@ function nameModule() {
   var seedrandom = require('seedrandom');
   this.gen_color = function(name) {
     var rng = seedrandom(name);
-    var r = (Math.round(rng()* 127) + 127).toString(16);
-    var g = (Math.round(rng()* 127) + 127).toString(16);
-    var b = (Math.round(rng()* 127) + 127).toString(16);
+    var r = (Math.round(rng()* 100) + 154).toString(16);
+    var g = (Math.round(rng()* 100) + 154).toString(16);
+    var b = (Math.round(rng()* 100) + 154).toString(16);
     return '#' + r + g + b;
   }
 }
