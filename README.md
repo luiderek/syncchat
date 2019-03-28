@@ -1,4 +1,4 @@
-# voyochat
+# syncchat.us
 A chatroom where you can see what everyone types as they type.
 
 on the first run
