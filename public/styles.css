@@ -1,0 +1,173 @@
+body {
+  font: 14px sans-serif;
+  margin-right: auto;
+  margin-left: auto;
+  background-color: #191919;
+  color: #fff;
+  max-width: 90vw;
+  max-height: 90vh;
+  padding-right: 10px;
+  padding-left: 10px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 1000px;
+}
+
+button,
+input {
+  padding: 5px 10px;
+}
+
+input[type="text"] {
+  background-color: #333;
+  outline: none;
+  color: white;
+  width: 100%;
+  padding-left: 10px;
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+input[type="text"]:focus {
+  border-bottom: 2px solid white;
+  background-color: #404040;
+}
+
+span {
+  list-style-type: none;
+  display: inline-block;
+}
+
+.wrapper {
+  display: table-cell;
+  vertical-align: bottom;
+  height: 90vh;
+  width: 100vw;
+}
+
+#messageList {
+  margin: 0 auto;
+  padding: 8px;
+  height: 90%;
+  padding-right: 6px;
+  vertical-align: bottom;
+  max-height: 85vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.message {
+  margin: 0;
+  width: auto;
+}
+
+.name {
+  font-weight: bold;
+  padding-right: 0.3rem;
+}
+
+.fadein {
+  animation-name: fadein;
+  animation-duration: 1.5s;
+}
+
+@keyframes fadein {
+  from { color: #a5a5a5; }
+  to { color: #fff; }
+}
+
+.slidein {
+  color: #a5a5a5;
+  animation-name: slidein;
+  animation-duration: 0.3s;
+}
+
+@keyframes slidein {
+  from {
+    margin-top: -22px;
+    opacity: 0;
+  }
+
+  to {
+    margin-top: 0;
+    opacity: 1;
+  }
+}
+
+.slideinnocol {
+  animation-name: slideinnocol;
+  animation-duration: 0.3s;
+}
+
+@keyframes slideinnocol {
+  from {
+    margin-top: -22px;
+    opacity: 0;
+  }
+
+  to {
+    margin-top: 0;
+    opacity: 1;
+  }
+}
+
+a:link {
+  color: #b3b3ff;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #8080ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+  text-decoration: underline;
+}
+
+.nobreak {
+  display: inline;
+}
+
+.fade {
+  animation-name: fade;
+  animation-duration: 0.3s;
+  opacity: 0;
+}
+
+@keyframes fade {
+  from {
+    margin-top: 0;
+  }
+
+  to {
+    margin-top: -22px;
+  }
+}
+
+.blipout {
+  animation-name: blipout;
+  animation-duration: 0.3s;
+  opacity: 0;
+}
+
+@keyframes blipout {
+  from {
+    margin-top: 0;
+    opacity: 1;
+  }
+
+  to {
+    margin-top: -22px;
+    opacity: 0;
+  }
+}
