@@ -156,6 +156,7 @@ socketServer.on('connection', function (socket) {
         for (var i in sameroom) {
           users[i].emit('update line', p_msg[1], username);
           users[i].emit('publish line', username, p_msg[1]);
+          console.log(username + ": " + p_msg[1]);
         }
       } else if (p_msg[1] !== '') {
         msg = p_msg[0] + ' | ' + p_msg[1];

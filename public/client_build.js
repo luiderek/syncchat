@@ -49,7 +49,7 @@ function __getDirname(path) {
 	return require("path").resolve(__dirname + "/" + path + "/../");
 }
 /********** End of header **********/
-/********** Start module 0: /workspaces/project/syncchat/public/client.js **********/
+/********** Start module 0: C:\Users\luide\syncchat\syncchat\public\client.js **********/
 __modules[0] = function(module, exports) {
 /* eslint-disable no-undef */
 const WebSocketWrapper = __require(1,0);
@@ -195,8 +195,8 @@ function runafterDOMload() {
 
 return module.exports;
 }
-/********** End of module 0: /workspaces/project/syncchat/public/client.js **********/
-/********** Start module 1: /workspaces/project/syncchat/node_modules/ws-wrapper/lib/wrapper.js **********/
+/********** End of module 0: C:\Users\luide\syncchat\syncchat\public\client.js **********/
+/********** Start module 1: C:\Users\luide\syncchat\syncchat\node_modules\ws-wrapper\lib\wrapper.js **********/
 __modules[1] = function(module, exports) {
 "use strict";
 const WebSocketChannel = __require(2,1);
@@ -481,8 +481,8 @@ module.exports = WebSocketWrapper;
 
 return module.exports;
 }
-/********** End of module 1: /workspaces/project/syncchat/node_modules/ws-wrapper/lib/wrapper.js **********/
-/********** Start module 2: /workspaces/project/syncchat/node_modules/ws-wrapper/lib/channel.js **********/
+/********** End of module 1: C:\Users\luide\syncchat\syncchat\node_modules\ws-wrapper\lib\wrapper.js **********/
+/********** Start module 2: C:\Users\luide\syncchat\syncchat\node_modules\ws-wrapper\lib\channel.js **********/
 __modules[2] = function(module, exports) {
 "use strict";
 const EventEmitter = __require(3,2).EventEmitter;
@@ -667,8 +667,8 @@ module.exports = WebSocketChannel;
 
 return module.exports;
 }
-/********** End of module 2: /workspaces/project/syncchat/node_modules/ws-wrapper/lib/channel.js **********/
-/********** Start module 3: /workspaces/project/syncchat/node_modules/eventemitter3/index.js **********/
+/********** End of module 2: C:\Users\luide\syncchat\syncchat\node_modules\ws-wrapper\lib\channel.js **********/
+/********** Start module 3: C:\Users\luide\syncchat\syncchat\node_modules\eventemitter3\index.js **********/
 __modules[3] = function(module, exports) {
 'use strict';
 
@@ -976,7 +976,7 @@ if ('undefined' !== typeof module) {
 
 return module.exports;
 }
-/********** End of module 3: /workspaces/project/syncchat/node_modules/eventemitter3/index.js **********/
+/********** End of module 3: C:\Users\luide\syncchat\syncchat\node_modules\eventemitter3\index.js **********/
 /********** Footer **********/
 if(typeof module === "object")
 	module.exports = __require(0);
