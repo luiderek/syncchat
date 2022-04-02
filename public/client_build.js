@@ -57,7 +57,8 @@ window.socket = new WebSocketWrapper(
   new WebSocket('ws://' + location.host)
 );
 
-socket.on('disconnect', function () {
+socket.on('disconnect', () => {
+  socket.disconnect();
 });
 
 socket.on('error', () => {
@@ -190,7 +191,6 @@ function runafterDOMload() {
   sendform.addEventListener('focus', enterFocus);
   sendform.addEventListener('blur', enterFocus);
   document.body.addEventListener('keyup', enterFocus, 1);
-
 }
 
 return module.exports;

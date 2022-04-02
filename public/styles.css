@@ -1,5 +1,7 @@
 body {
-  font: 14px sans-serif;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: .88em;
   margin-right: auto;
   margin-left: auto;
   background-color: #191919;
@@ -67,7 +69,7 @@ span {
 }
 
 .name {
-  font-weight: bold;
+  font-weight: 500;
   padding-right: 0.3rem;
 }
 
@@ -99,6 +101,7 @@ span {
   }
 }
 
+/* i can probably kill this ruleset and just have a rule for color:white */
 .slideinnocol {
   animation-name: slideinnocol;
   animation-duration: 0.3s;

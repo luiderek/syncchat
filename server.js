@@ -17,7 +17,7 @@ const socketServer = new WebSocketWrapper(
 const NameModule = require('./server/names.js');
 const names = new NameModule();
 const EvalModule = require('./server/processmessage.js');
-const msgEval = new EvalModule();
+const messageEvaluator = new EvalModule();
 
 // Save all logged in `users`; keys are usernames
 var users = {};
@@ -39,7 +39,7 @@ function usersInRoom(user, room = '') {
     // console.log('user:', user);
     // console.log('users[user]._data:', users[user]._data);
   } else {
-    console.log('user', user);
+    console.log('user:', user);
     match = room;
   }
 
@@ -96,7 +96,7 @@ socketServer.on('connection', function (socket) {
     })
 
     .on('rolling update', function (msg) {
-      const p_msg = msgEval.process(msg);
+      const p_msg = messageEvaluator.process(msg);
       // msg[0] is type, msg[1] is trimmed output.
 
       if (p_msg[0] == 'none') {
@@ -122,7 +122,6 @@ socketServer.on('connection', function (socket) {
     .on('open line', function () {
       const sender = this.get('username');
       const color = names.gen_color(this.get('username'));
-      // const sameroom = usersInRoom(sender);
       const sameroom = hotel[this.get('room')];
       for (var i in sameroom) {
         users[i].emit('open line', sender, color);
@@ -148,41 +147,41 @@ socketServer.on('connection', function (socket) {
     // Called to turn an open line into a published line.
     .on('publish line', function (msg) {
 
-      const p_msg = msgEval.process(msg);
-      const sameroom = hotel[this.get('room')];
+      const processedMessage = messageEvaluator.process(msg);
+      const sameRoom = hotel[this.get('room')];
       const username = this.get('username');
 
-      if (p_msg[0] === 'none' && p_msg[1] !== '') {
-        for (var i in sameroom) {
-          users[i].emit('update line', p_msg[1], username);
-          users[i].emit('publish line', username, p_msg[1]);
-          console.log(username + ": " + p_msg[1]);
+      if (processedMessage[0] === 'none' && processedMessage[1] !== '') {
+        for (var i in sameRoom) {
+          users[i].emit('update line', processedMessage[1], username);
+          users[i].emit('publish line', username, processedMessage[1]);
         }
-      } else if (p_msg[1] !== '') {
-        msg = p_msg[0] + ' | ' + p_msg[1];
-        for (var i in sameroom) {
+        console.log(username + ": " + processedMessage[1]);
+      } else if (processedMessage[1] !== '') {
+        msg = processedMessage[0] + ' | ' + processedMessage[1];
+        for (var i in sameRoom) {
           users[i].emit('update line', username, msg);
         }
 
         // if I could figure out how to multicolor lines, mmmmm. hot.
-        if (p_msg[0] === 'name') {
-          let out = '~' + username + '~ is now *' + p_msg[1] + '*';
-          out = msgEval.format(out);
-          for (const i in sameroom) {
+        if (processedMessage[0] === 'name') {
+          let out = '~' + username + '~ is now *' + processedMessage[1] + '*';
+          out = messageEvaluator.format(out);
+          for (const i in sameRoom) {
             users[i].emit('close line', this.get('username'), fade = 1);
             users[i].emit('server message', out);
           }
-          this.set('username', p_msg[1]);
-        } else if (p_msg[0] === 'stats') {
-          for (const i in sameroom) {
+          this.set('username', processedMessage[1]);
+        } else if (processedMessage[0] === 'stats') {
+          for (const i in sameRoom) {
             let a;
             for (a = 0; a < 30; a++) {
               users[i].emit('server message', 'spam');
             }
           }
         }
-        if (p_msg[0] !== 'name') {
-          for (const i in sameroom) {
+        if (processedMessage[0] !== 'name') {
+          for (const i in sameRoom) {
             users[i].emit('publish line', username);
           }
         }
@@ -190,6 +189,13 @@ socketServer.on('connection', function (socket) {
     });
 
 });
+
+
+
+
+
+
+
 
 // Setup koa router
 app.use(router.routes());

@@ -4,7 +4,8 @@ window.socket = new WebSocketWrapper(
   new WebSocket('ws://' + location.host)
 );
 
-socket.on('disconnect', function () {
+socket.on('disconnect', () => {
+  socket.disconnect();
 });
 
 socket.on('error', () => {
@@ -18,20 +19,14 @@ if (document.readyState === 'loading') {
 }
 
 function runafterDOMload() {
-  // slowly on a path to kill all jquery native stronk
   $newMessage = document.querySelector('#newMessage');
   $newMessage.addEventListener('submit', function sendMessage(e) {
     $message = document.querySelector('#message');
-    // console.log('messageval:', $('#message').val());
-    // console.log('$message:', $message);
-    // console.log('messagetc:', $message.value);
     socket.emit('message', $message.value);
     e.preventDefault();
   });
 
   socket.request('entry');
-  // okay, yeah so the entry request never needed a second argument.
-  // socket.request('entry', $('#username').val());
   socket.emit('joined room', location.pathname);
 
   socket.on('open line', function (name, color) {
@@ -65,8 +60,6 @@ function runafterDOMload() {
     div.removeAttribute('id');
     div.classList.add('fadein');
     div.classList.remove('slidein');
-    // If tabbed out, change the title.
-    // if (document.hidden){changeTitle();}
   });
 
   socket.on('close line', function (name, fade = 0) {
@@ -83,8 +76,6 @@ function runafterDOMload() {
         closedMess.remove();
       }
     }
-    // i used to do a variable assignmnet to this function call
-    // unsure if it's needed, NTS in case of weird behavior
     setTimeout(delaykill, 305);
   });
 
@@ -153,5 +144,4 @@ function runafterDOMload() {
   sendform.addEventListener('focus', enterFocus);
   sendform.addEventListener('blur', enterFocus);
   document.body.addEventListener('keyup', enterFocus, 1);
-
 }
