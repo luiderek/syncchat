@@ -49,160 +49,154 @@ function __getDirname(path) {
 	return require("path").resolve(__dirname + "/" + path + "/../");
 }
 /********** End of header **********/
-/********** Start module 0: /home/derek/projects/chatroom/public/client.js **********/
+/********** Start module 0: /workspaces/project/syncchat/public/client.js **********/
 __modules[0] = function(module, exports) {
+/* eslint-disable no-undef */
 const WebSocketWrapper = __require(1,0);
 window.socket = new WebSocketWrapper(
-	new WebSocket("ws://" + location.host)
+  new WebSocket('ws://' + location.host)
 );
 
-socket.on("disconnect", function() {
+socket.on('disconnect', function () {
 });
 
-socket.on("error", () => {
-	socket.disconnect();
+socket.on('error', () => {
+  socket.disconnect();
 });
 
-
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", runafterDOMload);
-} else {  // `DOMContentLoaded` already fired
-    runafterDOMload();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', runafterDOMload);
+} else { // `DOMContentLoaded` already fired
+  runafterDOMload();
 }
 
-function runafterDOMload(){
-	$("#newMessage").on("submit", function sendMessage(e) {
-		e.preventDefault();
-	});
+function runafterDOMload() {
+  $newMessage = document.querySelector('#newMessage');
+  $newMessage.addEventListener('submit', function sendMessage(e) {
+    $message = document.querySelector('#message');
+    socket.emit('message', $message.value);
+    e.preventDefault();
+  });
 
-	socket.request("entry", $("#username").val() );
-	socket.emit("joined room", location.pathname);
+  socket.request('entry');
+  socket.emit('joined room', location.pathname);
 
-	socket.on('open line', function(name, color) {
-		if (document.getElementById("id:"+name) === null){
-			placement = document.getElementById("messageList");
-			let newDiv = document.createElement("div"),
-			newName = document.createElement("li"),
-			newMess = document.createElement("li");
-			newDiv.id = 'id:'+name;
-			newName.classList.add("name");
-			newName.style.color = color;
-			newDiv.classList.add("slidein");
-			newName.textContent = name + ": ";
-			newMess.textContent = "";
-			newDiv.appendChild(newName);
-			newDiv.appendChild(newMess);
-			placement.appendChild(newDiv);
-			scrollToBottom();
-		}
-	});
+  socket.on('open line', function (name, color) {
+    if (document.getElementById('id:' + name) === null) {
+      const placement = document.getElementById('messageList');
+      const newDiv = document.createElement('div');
+      const newName = document.createElement('span');
+      const newMess = document.createElement('span');
+      newDiv.id = 'id:' + name;
+      newName.classList.add('name');
+      newName.style.color = color;
+      newDiv.classList.add('slidein');
+      newName.textContent = name + ': ';
+      newMess.textContent = '';
+      newDiv.appendChild(newName);
+      newDiv.appendChild(newMess);
+      placement.appendChild(newDiv);
+      scrollToBottom();
+    }
+  });
 
-	socket.on('update line', function(msg = "", name) {
-		namedelement = document.getElementById('id:'+name).children[1];
-		if (namedelement !== null) {
-			namedelement.innerHTML = msg;
-		}
-	});
+  socket.on('update line', function (msg = '', name) {
+    const namedelement = document.getElementById('id:' + name).children[1];
+    if (namedelement !== null) {
+      namedelement.innerHTML = msg;
+    }
+  });
 
-	socket.on('publish line', function(name) {
-		var div = document.getElementById('id:' + name);
-		div.id = ".";
-		div.classList.add("fadein");
-		div.classList.remove("slidein");
-	});
+  socket.on('publish line', function (name) {
+    var div = document.getElementById('id:' + name);
+    div.removeAttribute('id');
+    div.classList.add('fadein');
+    div.classList.remove('slidein');
+  });
 
-	socket.on('close line', function(name, fade = 0) {
-		closedMess = document.getElementById('id:'+name);
-		closedMess.classList.remove("slidein");
-		if (fade = 0){
-			closedMess.classList.add("blipout");
-		}
-		else {
-			closedMess.classList.add("fade");
-		}
-		function delaykill(){
-			closedMess = document.getElementById('id:'+name)
-			if (closedMess !== null){
-				closedMess.remove();
-				closedMess.id = ".";
-			}
-		}
-		closetimeout = setTimeout(delaykill, 305);
-	});
-	socket.on('server message', function(msg, color = "#9999ff") {
-		placement = document.getElementById("messageList");
-		let newDiv = document.createElement("div"),
-				newMess = document.createElement("li");
-		newDiv.classList.add("slideinnocol");
-		newMess.style.color = color;
-		newMess.innerHTML = msg;
-		newDiv.appendChild(newMess);
-		placement.appendChild(newDiv);
-		scrollToBottom();
-	});
-	var sendform = document.getElementById("message");
+  socket.on('close line', function (name, fade = 0) {
+    let closedMess = document.getElementById('id:' + name);
+    closedMess.classList.remove('slidein');
+    if (fade === 0) {
+      closedMess.classList.add('blipout');
+    } else {
+      closedMess.classList.add('fade');
+    }
+    function delaykill() {
+      closedMess = document.getElementById('id:' + name);
+      if (closedMess !== null) {
+        closedMess.remove();
+      }
+    }
+    setTimeout(delaykill, 305);
+  });
+  socket.on('server message', function (msg, color = '#9999ff') {
+    const placement = document.getElementById('messageList');
+    const newDiv = document.createElement('div');
+    const newMess = document.createElement('li');
+    newDiv.classList.add('slideinnocol');
+    newMess.style.color = color;
+    newMess.innerHTML = msg;
+    newDiv.appendChild(newMess);
+    placement.appendChild(newDiv);
+    scrollToBottom();
+  });
+  var sendform = document.getElementById('message');
 
-	var line_open_status = 0;
+  var isLineOpen = 0;
 
-	function enter_focus(e, type = 0){
-		if (e.which === 13 || e.keyCode === 13) {
-			if(document.activeElement === document.body)
-			sendform.focus();
-			else if (document.activeElement == sendform){
-				if (sendform.value !== ""){
-					socket.emit('publish line', sendform.value);
-				}
-				sendform.value = "";
-				sendform.blur();
-			}
-		}
+  function enterFocus(e, type = 0) {
+    if (e.which === 13 || e.keyCode === 13) {
+      if (document.activeElement === document.body) { sendform.focus(); } else if (document.activeElement == sendform) {
+        if (sendform.value !== '') {
+          socket.emit('publish line', sendform.value);
+        }
+        sendform.value = '';
+        sendform.blur();
+      }
+    }
 
-		function gain_focus(){
-			if (line_open_status === 0)
-			socket.emit('open line');
-			line_open_status = 1;
-		}
+    function gainFocus() {
+      if (isLineOpen === 0) { socket.emit('open line'); }
+      isLineOpen = 1;
+    }
 
-		function lose_focus(){
-			if (sendform.value === "" && line_open_status === 1)
-			socket.emit('close line');
-			line_open_status = 0;
-		}
+    function loseFocus() {
+      if (sendform.value === '' && isLineOpen === 1) { socket.emit('close line'); }
+      isLineOpen = 0;
+    }
 
-		if (document.activeElement === sendform){
-			gain_focus();
-		}
-		else{
-			lose_focus();
-		}
-	}
+    if (document.activeElement === sendform) {
+      gainFocus();
+    } else {
+      loseFocus();
+    }
+  }
 
-	function form_keyup(e){
-		if (document.activeElement === sendform)
-		socket.emit('rolling update', sendform.value);
-	}
+  function form_keyup(e) {
+    if (document.activeElement === sendform) { socket.emit('rolling update', sendform.value); }
+  }
 
+  var messageDiv = document.getElementById('messageList');
 
-	var messageDiv = document.getElementById("messageList");
+  function scrollToBottom() {
+    const isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 40;
+    if (isScrolledToBottom) {
+      var scroll_interval = setInterval(function () { messageDiv.scrollTop = messageDiv.scrollHeight; }, 20);
+      var scroll_timeout = setTimeout(function () { clearInterval(scroll_interval); }, 300);
+    }
+  }
+  sendform.addEventListener('keyup', form_keyup);
+  sendform.addEventListener('focus', enterFocus);
+  sendform.addEventListener('blur', enterFocus);
+  document.body.addEventListener('keyup', enterFocus, 1);
 
-	function scrollToBottom(){
-		let isScrolledToBottom = messageDiv.scrollHeight - messageDiv.clientHeight <= messageDiv.scrollTop + 40;
-		if (isScrolledToBottom){
-			var scroll_interval = setInterval(function(){messageDiv.scrollTop = messageDiv.scrollHeight;}, 20);
-			var scroll_timeout = setTimeout(function(){clearInterval(scroll_interval)}, 300);
-		}
-	}
-	sendform.addEventListener('keyup', form_keyup);
-	sendform.addEventListener('focus', enter_focus);
-	sendform.addEventListener('blur', enter_focus);
-	document.body.addEventListener('keyup', enter_focus, 1);
-
-};
+}
 
 return module.exports;
 }
-/********** End of module 0: /home/derek/projects/chatroom/public/client.js **********/
-/********** Start module 1: /home/derek/projects/chatroom/node_modules/ws-wrapper/lib/wrapper.js **********/
+/********** End of module 0: /workspaces/project/syncchat/public/client.js **********/
+/********** Start module 1: /workspaces/project/syncchat/node_modules/ws-wrapper/lib/wrapper.js **********/
 __modules[1] = function(module, exports) {
 "use strict";
 const WebSocketChannel = __require(2,1);
@@ -487,8 +481,8 @@ module.exports = WebSocketWrapper;
 
 return module.exports;
 }
-/********** End of module 1: /home/derek/projects/chatroom/node_modules/ws-wrapper/lib/wrapper.js **********/
-/********** Start module 2: /home/derek/projects/chatroom/node_modules/ws-wrapper/lib/channel.js **********/
+/********** End of module 1: /workspaces/project/syncchat/node_modules/ws-wrapper/lib/wrapper.js **********/
+/********** Start module 2: /workspaces/project/syncchat/node_modules/ws-wrapper/lib/channel.js **********/
 __modules[2] = function(module, exports) {
 "use strict";
 const EventEmitter = __require(3,2).EventEmitter;
@@ -673,8 +667,8 @@ module.exports = WebSocketChannel;
 
 return module.exports;
 }
-/********** End of module 2: /home/derek/projects/chatroom/node_modules/ws-wrapper/lib/channel.js **********/
-/********** Start module 3: /home/derek/projects/chatroom/node_modules/eventemitter3/index.js **********/
+/********** End of module 2: /workspaces/project/syncchat/node_modules/ws-wrapper/lib/channel.js **********/
+/********** Start module 3: /workspaces/project/syncchat/node_modules/eventemitter3/index.js **********/
 __modules[3] = function(module, exports) {
 'use strict';
 
@@ -982,7 +976,7 @@ if ('undefined' !== typeof module) {
 
 return module.exports;
 }
-/********** End of module 3: /home/derek/projects/chatroom/node_modules/eventemitter3/index.js **********/
+/********** End of module 3: /workspaces/project/syncchat/node_modules/eventemitter3/index.js **********/
 /********** Footer **********/
 if(typeof module === "object")
 	module.exports = __require(0);

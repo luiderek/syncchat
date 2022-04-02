@@ -1,237 +1,32 @@
+<!DOCTYPE html>
 <html>
+
 <head>
-	<title>voyochat</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
-	<script type="text/javascript" src="/client.js"></script>
-	<style type="text/css">
-	body {
-		font: 14px Helvetica;
-		margin-right: auto;
-		margin-left:  auto;
-		background-color: #191919;
-		color: #ffffff;
-		max-width: 90vw;
-		max-height: 90vh;
-		padding-right: 10px;
-		padding-left: 10px;
-		line-height: 1.5;
-		box-sizing: border-box
-	}
-	button, input {
-		padding: 5px 10px;
-	}
-
-	input[type=text] {
-  background-color: #333333;
-	outline: none;
-  color: white;
-	width: 100%;
-	padding-left: 10px;
-	margin-top: 10px;
-	}
-
-	input[type=text]:focus {
-  	border-bottom: 2px solid white;
-		background-color: #404040;
-	}
-
-	::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-	  color: #d9d9d9;
-	  opacity: 1; /* Firefox */
-	}
-
-	li{
-		list-style-type: none;
-		display: inline-block;
-	}
-
-
-	.wrapper {
-	  display: table-cell;
-	  vertical-align: bottom;
-	  height: 90vh;
-		width: 100vw;
-	}
-
-	#messageList {
-		margin: 0 auto;
-		padding: 8px;
-		height: 90%;
-		padding-right: 6px;
-		vertical-align: bottom;
-		max-height: 85vh;
-		overflow-y: scroll;
-		overflow-x: hidden;
-	}
-
-	.message {
-		margin: 0;
-		width: auto;
-	}
-
-	.name{
-		font-weight: bold;
-		left: 0%;
-		margin: auto;
-		padding-right: 8px;
-	}
-
-	.fadein{
-		animation-name: fadein;
-		animation-duration: 1.5s;
-	}
-
-	@keyframes fadein{
-		from{color: #a5a5a5;}
-		to{color: #ffffff;}
-	}
-
-
-	.slidein{
-		color: #a5a5a5;
-		animation-name: slidein;
-		animation-duration: .3s;
-	}
-
-	@keyframes slidein{
-		from{
-			margin-top: -22px;
-			opacity:0;
-		}
-		to{
-			margin-top: 0px;
-			opacity:1;
-		}
-	}
-
-	.slideinnocol{
-		animation-name: slideinnocol;
-		animation-duration: .3s;
-	}
-
-	@keyframes slideinnocol{
-		from{
-			margin-top: -22px;
-			opacity: 0;
-		}
-		to{
-			margin-top: 0px;
-			opacity: 1;
-		}
-	}
-
-	/* unvisited link */
-	a:link {
-	  color: #b3b3ff;
-		text-decoration: none;
-	}
-
-	/* visited link */
-	a:visited {
-	  color: #8080ff;
-		text-decoration: none;
-	}
-
-	/* mouse over link */
-	a:hover {
-	  text-decoration: underline;
-	}
-
-	/* selected link */
-	a:active {
-	  text-decoration: underline;
-	}
-
-
-	.nobreak{
-		display: inline;
-	}
-
-	.fade{
-		animation-name: fade;
-		animation-duration: 0.3s;
-		opacity: 0
-	}
-
-	@keyframes fade{
-		from{
-			margin-top:0px;
-		}
-		to{
-			margin-top:-22px;
-		}
-	}
-
-
-	.blipout{
-		animation-name: blipout;
-		animation-duration: .3s;
-		opacity:0;
-	}
-
-	@keyframes blipout{
-		from{
-			margin-top:0px;
-			opacity:1;
-		}
-		to{
-			margin-top:-22px;
-			opacity:0;
-		}
-
-	}
-
-	::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-	}
-	::-webkit-scrollbar-button {
-	  width: 0px;
-	  height: 0px;
-	}
-	::-webkit-scrollbar-thumb {
-	  background: #606060;
-	  border: 10px none #ffffff;
-	  border-radius: 3px;
-	}
-	::-webkit-scrollbar-thumb:hover {
-	  background: #808080;
-	}
-	::-webkit-scrollbar-thumb:active {
-	  background: #808080;
-	}
-	::-webkit-scrollbar-track {
-	  background: #191919;
-	  border: 8px none #ffffff;
-	  border-radius: 19px;
-	}
-	::-webkit-scrollbar-track:hover {
-	  background: #191919;
-	}
-	::-webkit-scrollbar-track:active {
-	  background: #191919;
-	}
-	::-webkit-scrollbar-corner {
-	  background: transparent;
-	}
-
-
-	</style>
+  <title>room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- this is basically alternative jquery used at some point way back when -->
+  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script> -->
+  <link rel="shortcut icon" href="/favicon.ico" type="image/icon">
+  <link rel="stylesheet" href="/styles.css">
 </head>
+
 <body>
 
-	<div class="wrapper">
-			<section id="messages">
-				<div id="messageList"></div>
-			</section>
-	</div>
+  <div class="container">
 
-	<form id="newMessage">
-		<input type="text" id="message" autocomplete="off" placeholder="Enter to start typing."/>
-	</form>
+    <div class="wrapper">
+      <section id="messages">
+        <div id="messageList"></div>
+      </section>
+    </div>
 
+    <form id="newMessage">
+      <input type="text" id="message" autocomplete="off" placeholder="Enter to start typing." />
+    </form>
 
+  </div>
 
+  <!-- hopefully moving script down fixes some issues -->
+  <script type="text/javascript" src="/client.js"></script>
 </body>
 </html>
